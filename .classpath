@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="core/src/main/java"/>
+	<classpathentry kind="src" path="core/src/test/java"/>
+	<classpathentry excluding="**" kind="src" output="core/src/main/resources" path="core/src/main/resources"/>
+	<classpathentry excluding="**" kind="src" output="core/src/test/resources" path="core/src/test/resources"/>
+	<classpathentry kind="src" path="web/src/main/java"/>
+	<classpathentry kind="src" path="web/src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER/modules"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>
