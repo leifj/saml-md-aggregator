@@ -1,6 +1,6 @@
 package se.swami.saml.metadata.store.neo4j.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 

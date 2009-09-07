@@ -4,10 +4,8 @@
  */
 package se.swami.saml.metadata.collector.tests;
 
-import static org.junit.Assert.*;
-
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -15,6 +13,8 @@ import java.util.Collection;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.junit.Before;
+import org.junit.Test;
 import org.oasis.saml.metadata.EntityDescriptorType;
 
 import se.swami.saml.metadata.collector.MetadataCollector;

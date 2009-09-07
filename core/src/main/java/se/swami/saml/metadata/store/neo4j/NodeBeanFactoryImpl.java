@@ -3,12 +3,10 @@ package se.swami.saml.metadata.store.neo4j;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Set;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.neo4j.api.core.NeoService;
 import org.neo4j.api.core.Node;
-import org.neo4j.api.core.RelationshipType;
 import org.neo4j.util.index.IndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;

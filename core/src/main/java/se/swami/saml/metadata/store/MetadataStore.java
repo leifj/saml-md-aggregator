@@ -1,7 +1,6 @@
 package se.swami.saml.metadata.store;
 
 import java.util.Collection;
-import java.util.Comparator;
 
 import org.oasis.saml.metadata.EntityDescriptorType;
 

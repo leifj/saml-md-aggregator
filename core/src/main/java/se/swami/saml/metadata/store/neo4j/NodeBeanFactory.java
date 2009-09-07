@@ -1,10 +1,8 @@
 package se.swami.saml.metadata.store.neo4j;
 
 import java.util.Collection;
-import java.util.Set;
 
 import org.neo4j.api.core.Node;
-import org.neo4j.api.core.RelationshipType;
 
 public interface NodeBeanFactory<T> {
 

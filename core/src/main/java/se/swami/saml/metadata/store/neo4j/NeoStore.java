@@ -2,7 +2,6 @@ package se.swami.saml.metadata.store.neo4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 
 import org.neo4j.api.core.NeoService;
 import org.neo4j.util.index.IndexService;
