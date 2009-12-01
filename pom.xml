@@ -55,10 +55,6 @@
 				</plugin>
 			</plugins>
 	</build>
-	<modules>
-		<module>core</module>
-		<module>web</module>
-	</modules>
 
 	<properties>
 		<spring.framework.version>3.0.0.RC2</spring.framework.version>
