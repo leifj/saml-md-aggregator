@@ -28,7 +28,7 @@ public class FetchSWAMIDTest {
 	@Before
 	public void initialize() throws Exception {
 		try {
-			collection = MetadataReferenceFactory.instance("http://wayf.swamid.se/md/urn-mace-swami.se-swamid-test-1.0-metadata.xml");
+			collection = MetadataReferenceFactory.instance("http://wayf.swamid.se/md/swamid-1.0.xml");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			throw ex;

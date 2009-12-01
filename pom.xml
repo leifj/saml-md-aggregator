@@ -20,8 +20,7 @@
 	<licenses>
 		<license>
 			<name>BSD</name>
-			<url>http://devel.it.su.se/static/LICENSE.txt
-			</url>
+			<url>http://devel.it.su.se/static/LICENSE.txt</url>
 			<distribution>repo</distribution>
 			<comments>Stockholm university BSD License</comments>
 		</license>
@@ -29,8 +28,7 @@
 	<scm>
 		<connection>scm:svn:svn://anonsvn.it.su.se/saml-md-aggregator
 		</connection>
-		<developerConnection>
-			scm:svn:svn+ssh://svn.it.su.se/afs/su.se/services/svn/saml-md-aggregator
+		<developerConnection>scm:svn:svn+ssh://svn.it.su.se/afs/su.se/services/svn/saml-md-aggregator
 		</developerConnection>
 	</scm>
 	<organization>
@@ -48,6 +46,14 @@
 						<target>1.5</target>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>maven-jetty-plugin</artifactId>
+					<version>6.1.15</version>
+					<configuration>
+						<contextPath>/</contextPath>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>
@@ -55,33 +61,86 @@
 		<module>core</module>
 		<module>web</module>
 	</modules>
+
+	<properties>
+		<spring.framework.version>3.0.0.RC2</spring.framework.version>
+		<org.slf4j.version>1.5.2</org.slf4j.version>
+	</properties>
+
 	<repositories>
 		<repository>
 			<id>su-mvn</id>
 			<name>SU Maven2</name>
-			<url>http://maven.it.su.se/it.su.se/maven2
-			</url>
+			<url>http://maven.it.su.se/it.su.se/maven2 </url>
 		</repository>
 		<repository>
 			<id>neo4j-public-repository</id>
 			<url>http://m2.neo4j.org</url>
 		</repository>
+		<!--
+			repository> <id>dev.java.net</id>
+			<url>http://download.java.net/maven/2</url> </repository
+		-->
 		<repository>
-			<id>dev.java.net</id>
-			<url>http://download.java.net/maven/2</url>
+			<id>ibiblio mirror</id>
+			<url>http://mirrors.ibiblio.org/pub/mirrors/maven2/</url>
 		</repository>
+		<repository>
+			<id>Springframework milestone</id>
+			<url>http://maven.springframework.org/milestone</url>
+		</repository>
+		<repository>
+			<id>jboss</id>
+			<url>http://repository.jboss.org/maven2</url>
+		</repository>
+		<!-- repository>
+			<id>java.net</id>
+			<url>https://maven-repository.dev.java.net/nonav/repository</url>
+			<layout>legacy</layout>
+		</repository -->
+		<repository>
+			<id>codehaus</id>
+			<url>http://repository.codehaus.org</url>
+		</repository>
+		<repository>
+			<id>atlassian</id>
+			<url>http://repository.atlassian.com/maven2</url>
+		</repository>
+		<!--  repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Repository for Maven</name>
+			<url>http://download.java.net/maven/2/</url>
+			<layout>default</layout>
+		</repository -->
 	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>maven2-repository.dev.java.net</id>
+			<url>http://download.java.net/maven/2</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>maven-repository.dev.java.net</id>
+			<name>Java.net Maven 1 Repository (legacy)</name>
+			<url>http://download.java.net/maven/1</url>
+			<layout>legacy</layout>
+		</pluginRepository>
+	</pluginRepositories>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
-				<version>4.6</version>
+				<version>4.7</version>
 			</dependency>
 			<dependency>
 				<groupId>se.swami.saml.metadata</groupId>
 				<artifactId>saml-md-beans</artifactId>
 				<version>1.0-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>velocity</groupId>
+				<artifactId>velocity</artifactId>
+				<version>1.5</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-httpclient</groupId>
@@ -95,28 +154,60 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
+				<artifactId>spring-beans</artifactId>
+				<version>${spring.framework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>${spring.framework.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>quartz</groupId>
+						<artifactId>quartz</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
-				<version>2.5.5</version>
+				<version>${spring.framework.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
-				<version>2.5.5</version>
+				<version>${spring.framework.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-aop</artifactId>
-				<version>2.5.5</version>
+				<version>${spring.framework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-test</artifactId>
+				<version>${spring.framework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-oxm</artifactId>
+				<version>${spring.framework.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-tx</artifactId>
-				<version>2.5.5</version>
+				<version>${spring.framework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.framework.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-webmvc</artifactId>
-				<version>2.5.5</version>
+				<version>${spring.framework.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>javax.servlet</groupId>
@@ -129,42 +220,58 @@
 				<version>1.2</version>
 			</dependency>
 			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib-nodep</artifactId>
+				<version>2.1_3</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>2.0</version>
+			</dependency>
+
+			<dependency>
 				<groupId>com.sun.jersey.contribs</groupId>
 				<artifactId>jersey-spring</artifactId>
-			    <version>1.0.3</version>
+				<version>1.0.3</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>1.2.1</version>
 			</dependency>
 			<dependency>
 				<groupId>com.sun.jersey</groupId>
 				<artifactId>jersey-server</artifactId>
-			    <version>1.0.3</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xerces</groupId>
-                        <artifactId>xercesImpl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>xalan</groupId>
-                        <artifactId>xalan</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>jaxen</groupId>
-                        <artifactId>jaxen</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>stax</groupId>
-                <artifactId>stax-api</artifactId>
-                <version>1.0.1</version>
-            </dependency>
+				<version>1.0.3</version>
+				<exclusions>
+					<exclusion>
+						<groupId>xml-apis</groupId>
+						<artifactId>xml-apis</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>xerces</groupId>
+						<artifactId>xercesImpl</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>xalan</groupId>
+						<artifactId>xalan</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>jaxen</groupId>
+						<artifactId>jaxen</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>stax</groupId>
+				<artifactId>stax-api</artifactId>
+				<version>1.0.1</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<distributionManagement>
@@ -175,8 +282,7 @@
 		</repository>
 		<site>
 			<id>website</id>
-			<url>
-				scpexe://svn.it.su.se/afs/su.se/services/www/hosts/devel.it.su.se/pages/saml-md-aggregator
+			<url>scpexe://svn.it.su.se/afs/su.se/services/www/hosts/devel.it.su.se/pages/saml-md-aggregator
 			</url>
 		</site>
 	</distributionManagement>

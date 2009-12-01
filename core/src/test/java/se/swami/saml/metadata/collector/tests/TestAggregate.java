@@ -4,16 +4,23 @@
  */
 package se.swami.saml.metadata.collector.tests;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
-import junit.framework.TestCase;
-
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.oasis.saml.metadata.EntityDescriptorType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import se.swami.saml.metadata.collector.MetadataAggregate;
 import se.swami.saml.metadata.collector.MetadataCollector;
@@ -21,20 +28,30 @@ import se.swami.saml.metadata.collector.MetadataReferenceFactory;
 import se.swami.saml.metadata.collector.impl.BasicMetadataCollector;
 import se.swami.saml.metadata.store.MetadataStore;
 
-public class TestAggregate extends TestCase {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
+public class TestAggregate {
 
 	@Autowired
+	@Qualifier("neoStore")
 	private MetadataStore metadataStore;
 	private X509Certificate signer;
-
-	private static final String MD_URI = "urn-mace-swami.se-swamid-test-1.0-metadata-signed.xml";
 	
-	@Override
-	protected void setUp() throws Exception {
+	private static final String MD_URI = "swamid-1.0.xml";
+	
+	@Before
+	public void setUp() throws Exception {
 		CertificateFactory cf = CertificateFactory.getInstance("X509");
 		signer = (X509Certificate)cf.generateCertificate(Thread.currentThread().getContextClassLoader().getResourceAsStream("md-signer.crt"));
 	}
 	
+	@Test
+	public void testStore() {
+		System.err.println(metadataStore);
+		assertNotNull(metadataStore);
+	}
+	
+	@Test
 	public void testFetch() {
 		try {
 			MetadataCollector collector = new BasicMetadataCollector();

@@ -1,42 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app version="2.4"
-         xmlns="http://java.sun.com/xml/ns/j2ee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
-         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" >
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-		<context-param>
-	        <param-name>contextConfigLocation</param-name>
-	        <param-value>classpath:applicationContext.xml</param-value>
-    	</context-param>
-    	
-	    <listener>
-	        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	    </listener>
-	    <listener>
-	        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
-	    </listener>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml</param-value>
+	</context-param>
 
-		<servlet>
-			<servlet-name>Jersey Servlet</servlet-name>
-			<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
-   		</servlet>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
 
-        <servlet-mapping>
-                <servlet-name>Jersey Servlet</servlet-name>
-                <url-pattern>/api/*</url-pattern>
-        </servlet-mapping>
+	<!--
+	<servlet>
+		<servlet-name>Jersey Servlet</servlet-name>
+		<servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+	</servlet>
 
-        <welcome-file-list>
-                <welcome-file>index.jsp</welcome-file>
-        </welcome-file-list>
+	<servlet-mapping>
+		<servlet-name>Jersey Servlet</servlet-name>
+		<url-pattern>/api/*</url-pattern>
+	</servlet-mapping>
+	
+	-->
 
-        <jsp-config>
-       		<taglib>
-	            <taglib-uri>/spring</taglib-uri>
-	            <taglib-location>/WEB-INF/tld/spring-form.tld</taglib-location>
-           	</taglib>
-        </jsp-config>
+	<servlet>
+		<servlet-name>metadata</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>metadata</servlet-name>
+		<url-pattern>/md/*</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<jsp-config>
+		<taglib>
+			<taglib-uri>/spring</taglib-uri>
+			<taglib-location>/WEB-INF/tld/spring-form.tld</taglib-location>
+		</taglib>
+	</jsp-config>
 
 </web-app>

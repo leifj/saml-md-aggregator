@@ -46,9 +46,9 @@
 			<type>pom</type>
 		</dependency>
 		<dependency>
-		    <groupId>org.neo4j</groupId>
-		   	<artifactId>neo-utils</artifactId>
-		   	<version>1.0-b8-SNAPSHOT</version>
+			<groupId>org.neo4j</groupId>
+			<artifactId>neo-utils</artifactId>
+			<version>1.0-b8-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -64,12 +64,24 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 		</dependency>
+                <dependency>
+        		<groupId>org.springframework</groupId>
+        		<artifactId>spring-oxm</artifactId>
+      		</dependency>
+                <dependency>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                </dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>

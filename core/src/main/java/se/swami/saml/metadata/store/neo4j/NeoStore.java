@@ -7,23 +7,39 @@ import org.neo4j.api.core.NeoService;
 import org.neo4j.util.index.IndexService;
 import org.oasis.saml.metadata.EntityDescriptorType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import se.swami.saml.metadata.collector.MetadataIOException;
 import se.swami.saml.metadata.store.MetadataStore;
+import se.swami.saml.metadata.store.StoreBase;
 import se.swami.saml.metadata.store.neo4j.domain.EntityDescriptor;
 import se.swami.saml.metadata.store.neo4j.domain.Location;
+import se.swami.saml.metadata.utils.MetadataUtils;
 
-public class NeoStore implements MetadataStore {
+public class NeoStore extends StoreBase implements MetadataStore {
 	
 	@Autowired
 	private NeoService neoService;
 	@Autowired
 	private IndexService indexService;
+
 	@Autowired
+	@Qualifier("entityDescriptorFactory")
 	private NodeBeanFactory<EntityDescriptor> entityDescriptorFactory;
+	
 	@Autowired
+	@Qualifier("locationFactory")
 	private NodeBeanFactory<Location> locationFactory;
+	
+	public void setEntityDescriptorFactory(
+			NodeBeanFactory<EntityDescriptor> entityDescriptorFactory) {
+		this.entityDescriptorFactory = entityDescriptorFactory;
+	}
+	
+	public void setLocationFactory(NodeBeanFactory<Location> locationFactory) {
+		this.locationFactory = locationFactory;
+	}
 	
 	public Collection<EntityDescriptorType> fetchByEntityID(String entityID) 
 		throws MetadataIOException {
@@ -60,17 +76,19 @@ public class NeoStore implements MetadataStore {
 
 	public void remove(String id) throws MetadataIOException {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Transactional
 	public void store(EntityDescriptorType entity) throws MetadataIOException {
+		if (isReadOnly())
+			throw new MetadataIOException("Read Only Metadata Store");
+		
 		try {
 			EntityDescriptor e = entityDescriptorFactory.findOrCreate("ID",entity.getID());
 			e.setEntityID(entity.getEntityID());
 			e.setEntityDesciptorType(entity);
 			
-			for (String origin: e.getOrigin()) {
+			for (String origin: MetadataUtils.getOrigin(entity)) {
 				Location loc = locationFactory.findOrCreate("url", origin);
 				loc.getEntityDescriptors().add(e);
 				e.getLocations().add(loc);
@@ -79,6 +97,12 @@ public class NeoStore implements MetadataStore {
 		} catch (Exception ex) {
 			throw new MetadataIOException(ex);
 		}
+	}
+
+	public Collection<EntityDescriptorType> fetchAll()
+			throws MetadataIOException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

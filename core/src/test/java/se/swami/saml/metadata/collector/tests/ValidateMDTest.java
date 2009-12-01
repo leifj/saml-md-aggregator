@@ -28,7 +28,7 @@ public class ValidateMDTest {
 	private X509Certificate signer;
 	private X509Certificate noSigner;
 
-	private static final String MD_URI = "urn-mace-swami.se-swamid-test-1.0-metadata-signed.xml";
+	private static final String MD_URI = "swamid-1.0.xml";
 	
 	@Before
 	public void initialize() throws Exception {

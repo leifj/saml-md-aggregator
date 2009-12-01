@@ -179,7 +179,7 @@ public class BasicMetadataCollector implements MetadataCollector {
         public Key getKey() { return pk; }
     }
     
-    public Collection<EntityDescriptorType> processXml(MetadataReference collection, InputStream in) throws MetadataCollectorException {
+    public Collection<EntityDescriptorType> processXml(InputStream in, CertificateValidator validator) throws MetadataCollectorException {
     	
     	List<EntityDescriptorType> entities = new ArrayList<EntityDescriptorType>();
     	
@@ -191,8 +191,8 @@ public class BasicMetadataCollector implements MetadataCollector {
 	    	StreamUtils.copyStream(baos, in);
 	    	String xmlData = baos.toString();
 	    	
-	    	if (collection.getValidator() != null)
-				validate(xmlData,collection.getValidator());
+	    	if (validator != null)
+				validate(xmlData,validator);
 	    	
 	    	if (xmlData.contains("EntitiesDescriptor")) {
 				EntitiesDescriptorDocument doc = EntitiesDescriptorDocument.Factory.parse(xmlData);
@@ -237,7 +237,7 @@ public class BasicMetadataCollector implements MetadataCollector {
 			InputStream mdxml = getXML(collection.getLocation().toString());
 			if (mdxml == null)
 				throw new MetadataIOException("Unable to fetch "+collection.getLocation().toString());
-			return processXml(collection,mdxml);
+			return processXml(mdxml,collection.getValidator());
 		} catch (IOException ex) {
 			throw new MetadataIOException(ex);
 		}
