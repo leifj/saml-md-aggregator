@@ -6,14 +6,14 @@
 	<version>1.0-SNAPSHOT</version>
 	<name>SAML Metadata Aggregator</name>
 	<description>SAML Metadata Aggregator</description>
-	<url>http://devel.it.su.se</url>
+	<url>http://www.nordu.net</url>
 	<packaging>war</packaging>
 	<developers>
 		<developer>
 			<id>leifj</id>
 			<name>Leif Johansson</name>
-			<email>leifj@it.su.se</email>
-			<organization>Stockholm university</organization>
+			<email>leifj@nordu.net</email>
+			<organization>NORDUnet A/S</organization>
 			<timezone>MET</timezone>
 		</developer>
 	</developers>
@@ -26,10 +26,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:svn://anonsvn.it.su.se/saml-md-aggregator
-		</connection>
-		<developerConnection>scm:svn:svn+ssh://svn.it.su.se/afs/su.se/services/svn/saml-md-aggregator
-		</developerConnection>
+		<connection>scm:svn:svn://anonsvn.it.su.se/saml-md-aggregator</connection>
+		<developerConnection>scm:svn:svn+ssh://svn.it.su.se/afs/su.se/services/svn/saml-md-aggregator</developerConnection>
 	</scm>
 	<organization>
 		<name>SWAMI</name>
@@ -65,7 +63,7 @@
 		<repository>
 			<id>su-mvn</id>
 			<name>SU Maven2</name>
-			<url>http://maven.it.su.se/it.su.se/maven2 </url>
+			<url>http://maven.it.su.se/it.su.se/maven2</url>
 		</repository>
 		<repository>
 			<id>neo4j-public-repository</id>
@@ -119,7 +117,6 @@
 			<layout>legacy</layout>
 		</pluginRepository>
 	</pluginRepositories>
-	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>junit</groupId>
@@ -225,49 +222,27 @@
 			</dependency>
 
 			<dependency>
-				<groupId>com.sun.jersey.contribs</groupId>
-				<artifactId>jersey-spring</artifactId>
-				<version>1.0.3</version>
-			</dependency>
-			<dependency>
 				<groupId>commons-fileupload</groupId>
 				<artifactId>commons-fileupload</artifactId>
 				<version>1.2.1</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-server</artifactId>
-				<version>1.0.3</version>
-				<exclusions>
-					<exclusion>
-						<groupId>xml-apis</groupId>
-						<artifactId>xml-apis</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>xerces</groupId>
-						<artifactId>xercesImpl</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>xalan</groupId>
-						<artifactId>xalan</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>log4j</groupId>
-						<artifactId>log4j</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>jaxen</groupId>
-						<artifactId>jaxen</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>stax</groupId>
 				<artifactId>stax-api</artifactId>
 				<version>1.0.1</version>
 			</dependency>
+                        <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>apoc</artifactId>
+                        <version>0.1</version>
+                        <type>pom</type>
+                </dependency>
+                <dependency>
+                        <groupId>org.neo4j</groupId>
+                        <artifactId>neo-utils</artifactId>
+                        <version>1.0-b8-SNAPSHOT</version>
+                </dependency>
 		</dependencies>
-	</dependencyManagement>
 	<distributionManagement>
 		<repository>
 			<id>ssh-repository</id>
@@ -276,8 +251,7 @@
 		</repository>
 		<site>
 			<id>website</id>
-			<url>scpexe://svn.it.su.se/afs/su.se/services/www/hosts/devel.it.su.se/pages/saml-md-aggregator
-			</url>
+			<url>scpexe://svn.it.su.se/afs/su.se/services/www/hosts/devel.it.su.se/pages/saml-md-aggregator</url>
 		</site>
 	</distributionManagement>
 </project>
