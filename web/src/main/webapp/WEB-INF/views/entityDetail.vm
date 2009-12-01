@@ -1,0 +1,17 @@
+<html>
+<head>
+<title>Entity ${entity.entityID}</title>
+</head>
+<body>
+<table>
+   <tr>
+    <td>ID</td>
+   	<td>${entity.ID}</td>
+   </tr>
+   <tr>
+    <td>Entity ID</td>
+   	<td>${entity.entityID}</td>
+   </tr>
+</table>
+</body>
+</html>

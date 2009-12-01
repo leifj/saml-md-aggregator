@@ -1,0 +1,12 @@
+<html>
+<head>
+<title>Metadata</title>
+</head>
+<body>
+<ul>
+#foreach($entity in $entities)
+   <li><a href="#springUrl("/entity/${entity.ID}")">${entity.entityID}</a></li>
+#end
+</ul>
+</body>
+</html>
