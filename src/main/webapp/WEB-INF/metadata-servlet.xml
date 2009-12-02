@@ -22,26 +22,34 @@
                 <property name="resourceLoaderPath" value="WEB-INF/views/"/>
         </bean>
         
-        <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+        <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver" p:order="0">
 		  <property name="mediaTypes">
 		    <map>
 		      <entry key="atom" value="application/atom+xml"/>
 		      <entry key="html" value="text/html"/>
 		      <entry key="json" value="application/json"/>
-		      <entry key="xml"  value="application/samlmetadata+xml"/>
+		      <entry key="xml"  value="application/xml"/>
 		    </map>
 		  </property>
 		  <property name="viewResolvers">
 		    <list>
-		      <bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver">
+		      <bean class="se.swami.saml.metadata.web.spring.StaticViewResolver" p:order="1">
+		      	<constructor-arg>
+		      		<bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView"/>
+		      	</constructor-arg>
+		      </bean>
+		      <bean class="se.swami.saml.metadata.web.spring.StaticViewResolver" p:order="2">
+		      	<constructor-arg>
+		      		<bean class="org.springframework.web.servlet.view.xml.MarshallingView">
+		      			<constructor-arg>
+               				<bean class="org.springframework.oxm.xmlbeans.XmlBeansMarshaller" />
+            			</constructor-arg>
+		      		</bean>
+		      	</constructor-arg>
+		      </bean>
+		      <bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver" p:order="3">
 		      	<property name="suffix" value=".vm"/>
 		      </bean>
-		    </list>
-		  </property>
-		  <property name="defaultViews">
-		    <list>
-		      <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
-		      <bean class="org.springframework.web.servlet.view.xml.MarhsallingView"/>
 		    </list>
 		  </property>
 		</bean>

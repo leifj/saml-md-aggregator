@@ -5,7 +5,7 @@
 <body>
 <ul>
 #foreach($entity in $entities)
-   <li><a href="#springUrl("/entity/${entity.ID}")">${entity.entityID}</a></li>
+   <li><a href="#springUrl("/md/entity/id/${entity.ID}.html")">${entity.entityID}</a></li>
 #end
 </ul>
 </body>
