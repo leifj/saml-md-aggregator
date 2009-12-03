@@ -3,6 +3,7 @@
 <title>Entity ${entity.entityID}</title>
 </head>
 <body>
+<h1>${entity.entityID}</h1>
 <table>
    <tr>
     <td>ID</td>
@@ -11,6 +12,10 @@
    <tr>
     <td>Entity ID</td>
    	<td>${entity.entityID}</td>
+   </tr>
+   <tr>
+   	<td>Certificates</td>
+   	<td>${metadataUtils.getCertificates($entity)}</td>
    </tr>
 </table>
 </body>

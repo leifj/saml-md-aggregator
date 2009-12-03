@@ -12,12 +12,10 @@ public class StaticViewResolver implements ViewResolver, Ordered {
 	private int order;
 	
 	public StaticViewResolver(View view) {
-		System.err.println("Constructor called: "+view+" "+view.getContentType());
 		this.view = view;
 	}
 	
 	public View resolveViewName(String vn, Locale loc) throws Exception {
-		System.err.println("Resolved to "+view);
 		return view;
 	}
 

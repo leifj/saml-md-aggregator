@@ -26,10 +26,8 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:svn://anonsvn.it.su.se/saml-md-aggregator
-		</connection>
-		<developerConnection>scm:svn:svn+ssh://svn.it.su.se/afs/su.se/services/svn/saml-md-aggregator
-		</developerConnection>
+		<connection>scm:svn:svn://anonsvn.it.su.se/saml-md-aggregator</connection>
+		<developerConnection>scm:svn:svn+ssh://svn.it.su.se/afs/su.se/services/svn/saml-md-aggregator</developerConnection>
 	</scm>
 	<organization>
 		<name>SWAMI</name>
@@ -59,6 +57,7 @@
 	<properties>
 		<spring.framework.version>3.0.0.RC2</spring.framework.version>
 		<org.slf4j.version>1.5.2</org.slf4j.version>
+		<xmlbeans.version>2.4.0</xmlbeans.version>
 	</properties>
 
 	<repositories>
@@ -99,6 +98,10 @@
 		<repository>
 			<id>atlassian</id>
 			<url>http://repository.atlassian.com/maven2</url>
+		</repository>
+		<repository>
+			<id>saxon</id>
+			<url>http://svn.apache.org/repos/asf/tuscany/maven</url>
 		</repository>
 		<!--
 			repository> <id>maven2-repository.dev.java.net</id> <name>Java.net
@@ -261,6 +264,22 @@
 			<artifactId>neo-utils</artifactId>
 			<version>1.0-b8-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.xmlbeans</groupId>
+			<artifactId>xmlbeans-xpath</artifactId>
+			<version>${xmlbeans.version}</version>
+		</dependency>
+		<dependency>
+    		<groupId>net.sf.saxon</groupId>
+    		<artifactId>saxon-dom</artifactId>
+    		<version>9.0.0.2</version>
+		</dependency>
+		<dependency>
+    		<groupId>net.sf.saxon</groupId>
+    		<artifactId>saxon</artifactId>
+    		<version>9.0.0.2</version>
+		</dependency>
+		
 	</dependencies>
 	<distributionManagement>
 		<repository>

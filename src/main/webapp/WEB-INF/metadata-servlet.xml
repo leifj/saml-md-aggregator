@@ -28,7 +28,7 @@
 		      <entry key="atom" value="application/atom+xml"/>
 		      <entry key="html" value="text/html"/>
 		      <entry key="json" value="application/json"/>
-		      <entry key="xml"  value="application/xml"/>
+		      <entry key="xml"  value="application/samlmetadata+xml"/>
 		    </map>
 		  </property>
 		  <property name="viewResolvers">
@@ -40,11 +40,7 @@
 		      </bean>
 		      <bean class="se.swami.saml.metadata.web.spring.StaticViewResolver" p:order="2">
 		      	<constructor-arg>
-		      		<bean class="org.springframework.web.servlet.view.xml.MarshallingView">
-		      			<constructor-arg>
-               				<bean class="org.springframework.oxm.xmlbeans.XmlBeansMarshaller" />
-            			</constructor-arg>
-		      		</bean>
+		      		<bean class="se.swami.saml.metadata.web.spring.PrettyPrintXmlBeansView" p:contentType="application/samlmetadata+xml"/>
 		      	</constructor-arg>
 		      </bean>
 		      <bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver" p:order="3">

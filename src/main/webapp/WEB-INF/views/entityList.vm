@@ -1,12 +1,27 @@
 <html>
 <head>
-<title>Metadata</title>
+<title>${entities.name}</title>
 </head>
 <body>
-<ul>
-#foreach($entity in $entities)
-   <li><a href="#springUrl("/md/entity/id/${entity.ID}.html")">${entity.entityID}</a></li>
+<h1>${entities.name}</h1>
+<table>
+#foreach($entity in ${entities.entityDescriptorArray})
+	<tr>
+		<td><a href="#springUrl("/md/entity/id/${entity.ID}.html")">${entity.entityID}</a></td>
+		<td>$metadataUtils.validUntil($entity)</td>
+#set ($notAfter = $metadataUtils.firstCertExpiration($entity))
+#if ($notAfter)
+#if ($now.after($notAfter))
+#set ($dateClass = 'expired')
+#else
+#set ($dateClass = 'valid')
 #end
-</ul>
+		<td class="$dateClass">$notAfter</td>
+#else
+        <td class="expired"></td>
+#end
+   	</tr>
+#end
+</table>
 </body>
 </html>
