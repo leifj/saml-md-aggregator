@@ -6,9 +6,23 @@
 <h1>${entities.name}</h1>
 <table>
 #foreach($entity in ${entities.entityDescriptorArray})
+#set ($isIdP = $metadataUtils.isIdP($entity))
+#set ($isSP = $metadataUtils.isSP($entity))
+#if ($isSP)
+#set ($type = "SP")
+#end
+#if ($isIdP)
+#set ($type = "IdP")
+#end
 	<tr>
+	    <td>${type}</td>
 		<td><a href="#springUrl("/md/entity/id/${entity.ID}.html")">${entity.entityID}</a></td>
-		<td>$metadataUtils.validUntil($entity)</td>
+#set ($validUntil = $entity.validUntil)
+#if ($validUntil)
+		<td>$validUntil</td>
+#else
+		<td/>
+#end
 #set ($notAfter = $metadataUtils.firstCertExpiration($entity))
 #if ($notAfter)
 #if ($now.after($notAfter))

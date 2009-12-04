@@ -3,20 +3,111 @@
 <title>Entity ${entity.entityID}</title>
 </head>
 <body>
-<h1>${entity.entityID}</h1>
+#set ($isIdP = $metadataUtils.isIdP($entity))
+#set ($isSP = $metadataUtils.isSP($entity))
+
+#if ($isIdP)
+#set ($type = "Identity Provider")
+#end
+#if ($isSP)
+#set ($type = "Service Provider")
+#end
+<h1>${entity.entityID} ($type)</h1>
 <table>
-   <tr>
-    <td>ID</td>
-   	<td>${entity.ID}</td>
-   </tr>
    <tr>
     <td>Entity ID</td>
    	<td>${entity.entityID}</td>
    </tr>
    <tr>
-   	<td>Certificates</td>
-   	<td>${metadataUtils.getCertificates($entity)}</td>
+    <td>Certificate expires</td>
+    <td>${metadataUtils.timeOffset($metadataUtils.timeToCertExpire($entity))}</td>
    </tr>
+#if (${entity.validUntil})
+   <tr>
+    <td>Metadata expires</td>
+    <td>${metadataUtils.timeOffset($metadataUtils.timeToInvalid($entity))}</td>
+   </tr>
+#end
+#if ($isIdP)
+#set ($scope = $metadataUtils.scope($entity))
+#if ($scope)
+   <tr>
+   	 <td>Scope</td>
+   	 <td>$scope</td>
+   </tr>
+#end
+#end
+#if ($entity.organization && $entity.organization.organizationDisplayNameArray)
+#foreach ($displayName in ${entity.organization.organizationDisplayNameArray})
+   <tr class="lang-${displayName.lang}">
+   	<td>Organization (${displayName.lang})</td>
+   	<td>$displayName</td>
+   </tr>
+#end
+#end
+#foreach ($person in ${entity.contactPersonArray})
+   <tr>
+    <td class="contactType-${person.contactType}">Contact (${person.contactType})</td>
+   	<td>
+   	   <table>
+          <tr>
+          	<td>#if (${person.givenName})${person.givenName}#end #if (${person.surName})${person.surName}#end</td>
+          </tr>
+#if ($person.emailAddressArray)
+          <tr>
+          	<td>${metadataUtils.join($person.emailAddressArray,"&nbsp;")}</td> 
+          </tr>
+#end
+#if ($person.telePhoneNumberArray)
+          <tr>
+          	<td>${metadataUtils.join($person.telePhoneNumberArray,"&nbsp;")}</td> 
+          </tr>
+#end
+#if (${person.company})
+          <tr>
+            <td>${person.company}</td>
+          </tr>
+#end
+   	   </table>
+   	</td>
+   </tr>
+#end
+#if ($isSP)
+#foreach ($sp in ${entity.sPSSODescriptorArray})
+#foreach ($acs in ${sp.attributeConsumingServiceArray})
+#foreach ($serviceName in ${acs.serviceNameArray})
+   <tr class="lang-${serviceName.lang}">
+      <td>Service Name (${serviceName.lang})</td>
+      <td>${serviceName}</td>
+   </tr>
+#end
+#foreach ($serviceDescription in ${acs.serviceDescriptionArray})
+   <tr class="lang-${serviceDescription.lang}">
+      <td>Service Description (${serviceDescription.lang})</td>
+      <td>${serviceDescription}</td>
+   </tr>
+#end
+#if (${acs.requestedAttributeArray})
+   <tr>
+      <td>Requested Attributes</td>
+      <td><table>
+#foreach ($attribute in ${acs.requestedAttributeArray})
+#set ($friendlyName = ${attribute.friendlyName})
+#if ($attribute.required)
+#set ($attributeClass = "required-attribute")
+#else
+#set ($attributeClass = "optional-attribute")
+#end
+	    <tr class="${attributeClass}">
+	      <td>${attribute.name}#if ($friendlyName)(${attribute.friendlyName})#end</td>
+	    </tr>
+#end
+      </table></td>
+   <tr>
+#end
+#end
+#end
+#end
 </table>
 </body>
 </html>

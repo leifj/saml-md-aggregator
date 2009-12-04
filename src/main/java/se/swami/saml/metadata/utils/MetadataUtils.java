@@ -4,18 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.xml.security.exceptions.Base64DecodingException;
 import org.apache.xml.security.utils.Base64;
 import org.apache.xmlbeans.GDuration;
-import org.apache.xmlbeans.GDurationBuilder;
-import org.apache.xmlbeans.XmlBase64Binary;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -27,6 +22,7 @@ import org.oasis.saml.metadata.AdditionalMetadataLocationType;
 import org.oasis.saml.metadata.EntitiesDescriptorDocument;
 import org.oasis.saml.metadata.EntitiesDescriptorType;
 import org.oasis.saml.metadata.EntityDescriptorType;
+import org.oasis.saml.metadata.RoleDescriptorType;
 import org.oasis.saml.metadata.attribute.EntityAttributesDocument;
 import org.oasis.saml.metadata.attribute.EntityAttributesType;
 import org.w3c.dom.NodeList;
@@ -35,6 +31,10 @@ import se.swami.saml.metadata.collector.MetadataIOException;
 
 public class MetadataUtils {
 
+	private static final String NSDECL = "declare namespace ds='http://www.w3.org/2000/09/xmldsig#';"+
+		"declare namespace md='urn:oasis:names:tc:SAML:2.0:metadata';"+
+		"declare namespace shibmd='urn:mace:shibboleth:metadata:1.0';";
+	
 	public static EntityAttributesType findAttributes(EntityDescriptorType entity) throws MetadataIOException {
 		try {
 			org.w3c.dom.Node domNode = entity.getExtensions().getDomNode();
@@ -137,12 +137,35 @@ public class MetadataUtils {
 		return doc.getEntitiesDescriptor();
 	}
 	
-	public static String validUntil(EntityDescriptorType entity) {
-		Calendar validUntil = entity.getValidUntil();
-		return validUntil == null ? "" : validUntil.toString();
+	public static boolean isIdP(EntityDescriptorType entity) {
+		RoleDescriptorType[] idp =  entity.getIDPSSODescriptorArray();
+		return idp != null && idp.length > 0;
 	}
-
-	private static final String NSDECL = "declare namespace ds='http://www.w3.org/2000/09/xmldsig#';";
+	
+	public static boolean isSP(EntityDescriptorType entity) {
+		RoleDescriptorType[] sp =  entity.getSPSSODescriptorArray();
+		return sp != null && sp.length > 0;
+	}
+	
+	public static String join(Object[] objects, String s) {
+		StringBuffer buf = new StringBuffer();
+		int i = 0;
+		for (Object o : objects) {
+			if (i++ > 0)
+				buf.append(s);
+			buf.append(o);
+		}
+		return buf.toString();
+	}
+	
+	public static String scope(EntityDescriptorType entity) {
+		XmlObject scopes[] = (XmlObject[])entity.selectPath(NSDECL+"$this//shibmd:Scope");
+		if (scopes == null || scopes.length == 0)
+			return null;
+		
+		XmlCursor cursor = scopes[0].newCursor();
+		return cursor.getTextValue();
+	}
 	
 	public static X509Certificate[] getCertificates(EntityDescriptorType entity) throws Base64DecodingException, CertificateException {
 		XmlObject b64certs[] = (XmlObject[])entity.selectPath(NSDECL+"$this//ds:X509Certificate");
@@ -168,6 +191,69 @@ public class MetadataUtils {
 			}
 		}
 		return date;
+	}
+	
+	private static final long HOUR = 3600L * 1000L;
+	private static final long DAY = 24 * HOUR;
+	private static final long YEAR = 365 * DAY;
+	
+	public static String timeOffset(Long o) {
+		if (o == null)
+			return "";
+		
+		long offset = o.longValue();
+		String prefix = "";
+		String suffix = "";
+		if (offset < 0) {
+			offset = -offset;
+			suffix = "ago";
+		} else {
+			prefix = "in ";
+		}
+		long nyears = offset / YEAR;
+		offset = (offset % YEAR);
+		long ndays = offset / DAY;
+		offset = (offset % DAY);
+		long nhours = offset / HOUR;
+		
+		String text = prefix;
+		if (nyears > 0) {
+			text += nyears + " year";
+			if (nyears > 1)
+				text += "s";
+			text += " ";
+		}
+		if (ndays > 0) {
+			text += ndays + " day";
+			if (ndays > 1)
+				text += "s";
+			text += " ";
+		}
+		if (nhours > 0) {
+			text += nhours + " hour";
+			if (nhours > 1)
+				text += "s";
+			text += " ";
+		}
+		text += suffix;
+		return text;
+	}
+	
+	
+	public static Long timeToCertExpire(EntityDescriptorType entity) throws Base64DecodingException, CertificateException {
+		Calendar expires = Calendar.getInstance();
+		Date expiryDate = firstCertExpiration(entity);
+		if (expiryDate == null)
+			return null;
+		expires.setTime(expiryDate);
+		Calendar now = Calendar.getInstance();
+		return new Long(expires.getTimeInMillis() - now.getTimeInMillis());
+	}
+	
+	public static Long timeToInvalid(EntityDescriptorType entity) {
+		Calendar invalid = entity.getValidUntil();
+		Calendar now = Calendar.getInstance();
+		return invalid == null ? null : new Long(invalid.getTimeInMillis() - now.getTimeInMillis());
 	}
 	
 }
