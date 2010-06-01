@@ -15,4 +15,9 @@ public class NullVCS implements VCS {
 		System.err.println(comment);
 	}
 
+	public boolean update(File file) {
+		System.err.println("Updated "+file.getAbsolutePath());
+		return false;
+	}
+
 }

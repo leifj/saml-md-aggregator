@@ -15,5 +15,8 @@ public interface MetadataStore {
 	public Collection<EntityDescriptorType> fetchAll() throws MetadataIOException;
 	public Collection<EntityDescriptorType> fetchByEntityID(String entityID) throws MetadataIOException;
 	public Collection<EntityDescriptorType> fetchByTag(String tag) throws MetadataIOException;
+	public Collection<String> listAll() throws MetadataIOException;
+	public Collection<String> listByTag(String tag) throws MetadataIOException;
+	public void removeAll() throws MetadataIOException;
 	
 }

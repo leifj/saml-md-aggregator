@@ -17,6 +17,11 @@
 		<property name="directory" value="/tmp/metadata"/>
 	</bean>
 	
+	<bean id="kalmar" class="se.swami.saml.metadata.collector.MetadataReferenceFactory" factory-method="instance">
+		<constructor-arg index="0" value="https://kalmar2.org/simplesaml/module.php/aggregator/?id=kalmarcentral&amp;set=saml2&amp;exclude=sweden"/>
+		<constructor-arg index="1" value="kalmar-signer.crt"/>
+	</bean>
+	
 	<bean id="collector" class="se.swami.saml.metadata.collector.impl.BasicMetadataCollector" />
 		
 </beans>

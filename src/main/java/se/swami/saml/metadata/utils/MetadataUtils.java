@@ -37,8 +37,14 @@ public class MetadataUtils {
 	
 	public static EntityAttributesType findAttributes(EntityDescriptorType entity) throws MetadataIOException {
 		try {
+			if (entity.getExtensions() == null)
+				return null;
+			
 			org.w3c.dom.Node domNode = entity.getExtensions().getDomNode();
 			NodeList children = domNode.getChildNodes();
+			if (children == null || children.getLength() == 0)
+				return null;
+			
 			for (int i = 0; i < children.getLength(); i++) {
 				org.w3c.dom.Node cn = children.item(i);
 				if (cn.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE && cn.getLocalName().equals("EntityAttributes")) {
@@ -104,7 +110,7 @@ public class MetadataUtils {
 		entityNode.setProperty(n, values);
 	}
 	
-	public static String[] getOrigin(EntityDescriptorType entity) throws MetadataIOException {
+	public static String[] getMetadataLocations(EntityDescriptorType entity) throws MetadataIOException {
 		AdditionalMetadataLocationType[] locs = entity.getAdditionalMetadataLocationArray();
 		String[] origin = new String[locs.length];
 		int i = 0;
@@ -114,6 +120,16 @@ public class MetadataUtils {
 		}
 		
 		return origin;
+	}
+	
+	public static String getOrigin(EntityDescriptorType entity) throws MetadataIOException {
+		AdditionalMetadataLocationType[] locs = entity.getAdditionalMetadataLocationArray();
+		return locs == null || locs.length == 0 ? null : locs[locs.length-1].getStringValue();
+	}
+	
+	public static void addOrigin(EntityDescriptorType entity, String uri) {
+		AdditionalMetadataLocationType loc = entity.addNewAdditionalMetadataLocation();
+		loc.setStringValue(uri);
 	}
 	
 	public static EntitiesDescriptorType aggregate(Collection<EntityDescriptorType> entities, String name, Calendar validUntil, GDuration duration) {
@@ -238,7 +254,6 @@ public class MetadataUtils {
 		text += suffix;
 		return text;
 	}
-	
 	
 	public static Long timeToCertExpire(EntityDescriptorType entity) throws Base64DecodingException, CertificateException {
 		Calendar expires = Calendar.getInstance();

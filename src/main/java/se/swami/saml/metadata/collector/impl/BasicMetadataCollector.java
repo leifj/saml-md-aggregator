@@ -13,6 +13,7 @@ import java.security.Provider;
 import java.security.PublicKey;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -32,8 +33,7 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.xmlbeans.XmlException;
@@ -49,6 +49,7 @@ import se.swami.saml.metadata.collector.MetadataCollectorException;
 import se.swami.saml.metadata.collector.MetadataIOException;
 import se.swami.saml.metadata.collector.MetadataReference;
 import se.swami.saml.metadata.collector.MetadataValidationException;
+import se.swami.saml.metadata.utils.MetadataUtils;
 import se.swami.saml.metadata.utils.StreamUtils;
 
 public class BasicMetadataCollector implements MetadataCollector {
@@ -179,7 +180,22 @@ public class BasicMetadataCollector implements MetadataCollector {
         public Key getKey() { return pk; }
     }
     
-    public Collection<EntityDescriptorType> processXml(InputStream in, CertificateValidator validator) throws MetadataCollectorException {
+    protected EntityDescriptorType decorateEntity(MetadataReference ref, EntityDescriptorType entity) throws MetadataCollectorException {
+    	if (ref.isRemote())
+			MetadataUtils.addOrigin(entity,ref.getLocation());
+    	
+    	ref.setLastUpdate(Calendar.getInstance());
+    	
+    	String toHash = entity.getEntityID();
+    	if (ref.isRemote())
+    		toHash += ref.getLocation();
+    	
+    	entity.setID(DigestUtils.shaHex(toHash));
+    	
+    	return entity;
+    }
+    
+    protected Collection<EntityDescriptorType> processXml(InputStream in, MetadataReference ref) throws MetadataCollectorException {
     	
     	List<EntityDescriptorType> entities = new ArrayList<EntityDescriptorType>();
     	
@@ -191,6 +207,7 @@ public class BasicMetadataCollector implements MetadataCollector {
 	    	StreamUtils.copyStream(baos, in);
 	    	String xmlData = baos.toString();
 	    	
+	    	CertificateValidator validator = ref.getValidator();
 	    	if (validator != null)
 				validate(xmlData,validator);
 	    	
@@ -198,11 +215,12 @@ public class BasicMetadataCollector implements MetadataCollector {
 				EntitiesDescriptorDocument doc = EntitiesDescriptorDocument.Factory.parse(xmlData);
 				EntityDescriptorType[] entityArray = doc.getEntitiesDescriptor().getEntityDescriptorArray();
 				for (EntityDescriptorType entity : entityArray) {
-					entities.add(entity);
+					entities.add(decorateEntity(ref, entity));
 				}
 			} else if (xmlData.contains("EntityDescriptor")) {
 				EntityDescriptorDocument doc = EntityDescriptorDocument.Factory.parse(xmlData);
-				entities.add(doc.getEntityDescriptor());
+				EntityDescriptorType entity = doc.getEntityDescriptor();
+				entities.add(decorateEntity(ref, entity));
 			} else {
 				throw new IllegalArgumentException("Unknown metadata format");
 			}
@@ -214,32 +232,11 @@ public class BasicMetadataCollector implements MetadataCollector {
 		
 		return entities;
     }
-	
-    private InputStream getXML(String uri) throws IOException {
-        System.err.println(uri);
-        
-        if (uri.startsWith("http://") || uri.startsWith("https://")) {
-	        HttpClient client = new HttpClient();
-	        GetMethod get = new GetMethod(uri);
-	        int code = client.executeMethod(get);
-	        if (code == 200) {
-	        	return get.getResponseBodyAsStream();
-	        } else {
-	            return null;
-	        }
-        } else {
-        	return Thread.currentThread().getContextClassLoader().getResourceAsStream(uri);
-        }
-    }
     
-	public Collection<EntityDescriptorType> fetch(MetadataReference collection) throws MetadataCollectorException {
-		try {
-			InputStream mdxml = getXML(collection.getLocation().toString());
-			if (mdxml == null)
-				throw new MetadataIOException("Unable to fetch "+collection.getLocation().toString());
-			return processXml(mdxml,collection.getValidator());
-		} catch (IOException ex) {
-			throw new MetadataIOException(ex);
-		}
+	public Collection<EntityDescriptorType> fetch(MetadataReference ref) throws MetadataCollectorException {
+		InputStream mdxml = ref.getMetadata();
+		if (mdxml == null)
+			throw new MetadataIOException("Unable to fetch "+ref.getLocation().toString());
+		return processXml(mdxml,ref);
 	}
 }

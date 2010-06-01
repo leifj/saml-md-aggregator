@@ -88,7 +88,7 @@ public class NeoStore extends StoreBase implements MetadataStore {
 			e.setEntityID(entity.getEntityID());
 			e.setEntityDesciptorType(entity);
 			
-			for (String origin: MetadataUtils.getOrigin(entity)) {
+			for (String origin: MetadataUtils.getMetadataLocations(entity)) {
 				Location loc = locationFactory.findOrCreate("url", origin);
 				loc.getEntityDescriptors().add(e);
 				e.getLocations().add(loc);
@@ -101,6 +101,16 @@ public class NeoStore extends StoreBase implements MetadataStore {
 
 	public Collection<EntityDescriptorType> fetchAll()
 			throws MetadataIOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Collection<String> listAll() throws MetadataIOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Collection<String> listByTag(String tag) throws MetadataIOException {
 		// TODO Auto-generated method stub
 		return null;
 	}

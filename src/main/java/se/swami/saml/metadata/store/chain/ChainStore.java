@@ -87,4 +87,24 @@ public class ChainStore extends StoreBase implements MetadataStore {
 		}
 		return c;
 	}
+
+	public Collection<String> listAll() throws MetadataIOException {
+		ArrayList<String> c = new ArrayList<String>();
+		for (MetadataStore store : chain) {
+			Collection<String> sc = store.listAll();
+			if (sc != null && sc.size() > 0)
+				c.addAll(sc);
+		}
+		return c;
+	}
+
+	public Collection<String> listByTag(String tag) throws MetadataIOException {
+		ArrayList<String> c = new ArrayList<String>();
+		for (MetadataStore store : chain) {
+			Collection<String> sc = store.listByTag(tag);
+			if (sc != null && sc.size() > 0)
+				c.addAll(sc);
+		}
+		return c;
+	}
 }

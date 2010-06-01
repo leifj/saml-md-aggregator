@@ -22,12 +22,12 @@ import se.swami.saml.metadata.collector.impl.BasicMetadataCollector;
 import se.swami.saml.metadata.store.MetadataStore;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:applicationContext.xml"})
+@ContextConfiguration(locations = {"classpath:fs-tests.xml"})
 public class FileStoreTest {
 
 	@Autowired
-	@Qualifier("fileStore")
-	private MetadataStore fileStore;
+	@Qualifier("metadataStore")
+	private MetadataStore metadataStore;
 	private X509Certificate signer;
 	
 	private static final String MD_URI = "swamid-1.0.xml";
@@ -43,7 +43,7 @@ public class FileStoreTest {
 				collector.fetch(MetadataReferenceFactory.instance(MD_URI,signer));
 			
 			for (EntityDescriptorType entity : entities) {
-				fileStore.store(entity);
+				metadataStore.store(entity);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -57,8 +57,8 @@ public class FileStoreTest {
 	
 	@Test
 	public void testFirst() {
-		Assert.assertNotNull(fileStore);
-		System.err.println(fileStore);
+		Assert.assertNotNull(metadataStore);
+		System.err.println(metadataStore);
 	}
 
 }

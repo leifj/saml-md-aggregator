@@ -4,11 +4,16 @@
  */
 package se.swami.saml.metadata.collector;
 
-import java.net.URI;
+import java.io.InputStream;
+import java.util.Calendar;
+
 
 public interface MetadataReference {
 
-	public abstract URI getLocation();
+	public abstract String getLocation();
+	public abstract boolean isRemote();
+	public abstract InputStream getMetadata() throws MetadataIOException;
 	public abstract CertificateValidator getValidator();
+	public abstract void setLastUpdate(Calendar lastUpdate);
 	
 }

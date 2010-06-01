@@ -2,22 +2,24 @@ package se.swami.saml.metadata.store.fs;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.oasis.saml.metadata.EntityDescriptorType;
-import org.springframework.beans.factory.annotation.Required;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import se.swami.saml.metadata.collector.MetadataCollector;
 import se.swami.saml.metadata.collector.MetadataIOException;
-import se.swami.saml.metadata.collector.impl.BasicMetadataCollector;
-import se.swami.saml.metadata.store.VCS;
+import se.swami.saml.metadata.collector.MetadataReference;
+import se.swami.saml.metadata.collector.MetadataReferenceFactory;
 import se.swami.saml.metadata.store.MetadataStore;
 import se.swami.saml.metadata.store.StoreBase;
+import se.swami.saml.metadata.store.VCS;
 import se.swami.saml.metadata.store.vcs.NullVCS;
 import se.swami.saml.metadata.utils.MetadataUtils;
 import se.swami.saml.metadata.utils.StreamUtils;
@@ -25,22 +27,68 @@ import se.swami.saml.metadata.utils.XMLUtils;
 
 public class FileSystemMetadataStore extends StoreBase implements MetadataStore {
 
+	@Autowired
+	private MetadataCollector collector;
 	private static final String TAGS_ATTRIBUTE = "tags";
 
 	private File directory;
 	private VCS vcs;
+	private Hashtable<String, Set<String>> tag2ID;
+	private Hashtable<String, Set<String>> entityID2ID;
 
 	public void setVCS(VCS vcs) {
 		this.vcs = vcs;
 	}
 	
-	public void setDirectory(File directory) {
+	public void setDirectory(File directory) throws MetadataIOException {
 		this.directory = directory;
 		if (!directory.exists())
 			directory.mkdir();
+		rescan();
 	}
 	
-	public FileSystemMetadataStore() {
+	private void setIndex(Hashtable<String, Set<String>> index, String key, String value) {
+		Set<String> values = index.get(key);
+		if (values == null) {
+			values = new HashSet<String>();
+			index.put(key, values);
+		}
+		values.add(value);
+	}
+	
+	private synchronized void rescan() throws MetadataIOException {
+		tag2ID = new Hashtable<String, Set<String>>();
+		entityID2ID = new Hashtable<String, Set<String>>();
+		for (String id : list()) {
+			EntityDescriptorType entity = load(id);
+			if (entity != null)
+				indexEntity(entity);
+		}
+	}
+
+	private void indexEntity(EntityDescriptorType entity)
+			throws MetadataIOException {
+		String[] tags = MetadataUtils.getAttribute(entity, TAGS_ATTRIBUTE);
+		if (tags != null && tags.length > 0) {
+			for (String tag : tags) {
+				setIndex(tag2ID,tag,entity.getID());
+			}
+		}
+		setIndex(entityID2ID,entity.getID(),entity.getID());
+	}
+
+	private void removeFromIndex(Hashtable<String, Set<String>> index, String value) {
+		for (Set<String> values : tag2ID.values()) {
+			values.remove(value);
+		}
+	}
+	
+	private void unIndexEntity(String id) {
+		removeFromIndex(tag2ID,id);
+		removeFromIndex(entityID2ID,id);
+	}
+	
+	public FileSystemMetadataStore() throws MetadataIOException {
 		setVCS(new NullVCS()); /* easier than having to test */
 	}
 	
@@ -55,18 +103,27 @@ public class FileSystemMetadataStore extends StoreBase implements MetadataStore 
 	
 	private EntityDescriptorType load(String id) throws MetadataIOException {
 		try {
-			BasicMetadataCollector collector = new BasicMetadataCollector();
+			File metadataFile = file(id);
+			if (!metadataFile.exists()) {
+				unIndexEntity(id);
+				return null;
+			}
+			
+			boolean invalidateIndex = vcs.update(metadataFile);
 			Collection<EntityDescriptorType> entities;
-			File f = file(id);
-			FileInputStream fin = new FileInputStream(f);
-			entities = collector.processXml(fin, null);
+			MetadataReference ref = MetadataReferenceFactory.instance(file(id));
+			entities = collector.fetch(ref);
 			if (entities == null || entities.size() == 0)
 				return null;
 			
 			if (entities.size() > 1)
-				throw new MetadataIOException("File contains multiple entities: "+f.getAbsolutePath());
+				throw new MetadataIOException("Metadata contains multiple entities: "+ref.getLocation());
 			
-			return entities.iterator().next();
+			EntityDescriptorType entity = entities.iterator().next();
+			if (invalidateIndex)
+				indexEntity(entity);
+			
+			return entity;
 		} catch (Exception ex) {
 			throw new MetadataIOException(ex);
 		}
@@ -75,8 +132,13 @@ public class FileSystemMetadataStore extends StoreBase implements MetadataStore 
 	public Collection<EntityDescriptorType> fetchByEntityID(String entityID)
 			throws MetadataIOException {
 		ArrayList<EntityDescriptorType> c = new ArrayList<EntityDescriptorType>();
-		EntityDescriptorType e = load(eid2id(entityID));
-		c.add(e);
+		Set<String> ids = entityID2ID.get(entityID);
+		if (ids != null && ids.size() > 0) {
+			for (String id : ids) {
+				EntityDescriptorType e = load(id);
+				c.add(e);
+			}
+		}
 		return c;
 	}
 
@@ -88,11 +150,13 @@ public class FileSystemMetadataStore extends StoreBase implements MetadataStore 
 			throws MetadataIOException {
 		
 		ArrayList<EntityDescriptorType> c = new ArrayList<EntityDescriptorType>();
-		
-		for (String id : list()) {
-			EntityDescriptorType entity = load(id);
-			if (MetadataUtils.hasAttribute(entity, TAGS_ATTRIBUTE, tag))
-				c.add(entity);
+		Set<String> ids = tag2ID.get(tag);
+		if (ids != null && ids.size() > 0) {
+			for (String id : ids) {
+				EntityDescriptorType entity = load(id);
+				if (entity != null)
+					c.add(entity);
+			}
 		}
 		return c;
 	}
@@ -101,17 +165,8 @@ public class FileSystemMetadataStore extends StoreBase implements MetadataStore 
 		return id+".xml";
 	}
 	
-	protected String eid2id(String entityID) {
-		return DigestUtils.shaHex(entityID);
-	}
-	
 	protected String fileName(EntityDescriptorType entity) {
-		String id = entity.getID();
-		if (id == null) {
-			entity.setID(eid2id(entity.getEntityID()));
-			id = entity.getID();
-		}
-		return fileName(id);
+		return fileName(entity.getID());
 	}
 	
 	protected File file(EntityDescriptorType entity) {
@@ -153,7 +208,28 @@ public class FileSystemMetadataStore extends StoreBase implements MetadataStore 
 		ArrayList<EntityDescriptorType> c = new ArrayList<EntityDescriptorType>();
 		
 		for (String id : list()) {
-			c.add(load(id));
+			EntityDescriptorType entity = load(id);
+			if (entity != null)
+				c.add(entity);
+		}
+		return c;
+	}
+
+	public Collection<String> listAll() throws MetadataIOException {
+		return list();
+	}
+	
+	public Collection<String> listByTag(String tag)
+		throws MetadataIOException {
+
+		ArrayList<String> c = new ArrayList<String>();
+		Set<String> ids = tag2ID.get(tag);
+		if (ids != null && ids.size() > 0) {
+			for (String id : ids) {
+				EntityDescriptorType entity = load(id);
+				if (entity != null)
+					c.add(entity.getID());
+			}
 		}
 		return c;
 	}

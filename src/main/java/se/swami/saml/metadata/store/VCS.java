@@ -7,5 +7,6 @@ public interface VCS {
 
 	public void commit(File file, String comment, boolean isNew) throws IOException;
 	public void remove(File file, String comment);
+	public boolean update(File file);
 	
 }
