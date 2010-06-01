@@ -1,4 +1,4 @@
-package net.nordu.saml.signer.index;
+package net.nordu.mdx.index;
 
 public interface MetadataIndex {
 

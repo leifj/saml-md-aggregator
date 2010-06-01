@@ -1,4 +1,4 @@
-package net.nordu.saml.signer.servlets;
+package net.nordu.mdx.servlets;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,7 +45,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import net.nordu.saml.signer.MDXServer;
+import net.nordu.mdx.MDXServer;
 
 import org.mortbay.log.Log;
 import org.w3c.dom.Document;
@@ -134,7 +134,7 @@ public class MDXServlet extends HttpServlet {
 		ArrayList<Document> docs = new ArrayList<Document>();
 		
 		File entitiesDir = new File(server.getConfig().getProperty("mdx.servlet.dir"));
-		File xmlFile = new File(entitiesDir,.+".xml");
+		File xmlFile = new File(entitiesDir,request.getTags()[0]+".xml");
 		System.err.println(xmlFile);
 		
 		if (!xmlFile.isFile())
@@ -143,7 +143,7 @@ public class MDXServlet extends HttpServlet {
 		try {
 			DocumentBuilder db = makeDocumentBuilder();
 			Document doc = db.parse(xmlFile);
-			
+			docs.add(doc);
 			//TODO - optionally fix the Name, cache and validity attributes
 			//TODO - sign and cache
 			return docs;

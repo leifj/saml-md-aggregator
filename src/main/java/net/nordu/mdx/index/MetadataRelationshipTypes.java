@@ -1,4 +1,4 @@
-package net.nordu.saml.signer.index;
+package net.nordu.mdx.index;
 
 import org.neo4j.graphdb.RelationshipType;
 
@@ -13,7 +13,7 @@ import org.neo4j.graphdb.RelationshipType;
  *      
  *    hash-node:
  *    	hashValue: <transform of entityID>
- *      hashType: sha1  
+ *      hashType: sha1 
  *    
  *    tag-node
  *    	name:

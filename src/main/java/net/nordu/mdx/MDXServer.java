@@ -1,20 +1,25 @@
-package net.nordu.saml.signer;
+package net.nordu.mdx;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.net.URL;
 import java.security.KeyStore;
 import java.security.Provider;
 import java.security.Security;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import net.nordu.saml.signer.servlets.MDXServlet;
+import net.nordu.mdx.servlets.MDXServlet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
+import org.mortbay.jetty.handler.DefaultHandler;
+import org.mortbay.jetty.handler.HandlerList;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.ServletHolder;
+import org.mortbay.jetty.webapp.WebAppContext;
 
 public class MDXServer {
 	
@@ -45,10 +50,17 @@ public class MDXServer {
 	{
 		config = p;
 		jetty = new Server(8080);
-		Context root = new Context(jetty,"/",Context.SESSIONS);
 
 		initCrypto(p.getProperty("mdx.pkcs11.config"),p.getProperty("mdx.pkcs11.pin"),p.getProperty("mdx.pkcs11.provider"));
-		root.addServlet(new ServletHolder(new MDXServlet(this)), "/entity/*");
+
+		/*String[] configFiles = {"etc/jetty.xml"};
+		for(String configFile : configFiles) {
+		    XmlConfiguration configuration = new XmlConfiguration(new File(configFile).toURI().toURL()); 
+		    configuration.configure(jetty);
+		}*/
+		final URL warUrl = MDXServer.class.getClassLoader().getResource("webapp");
+		final String warUrlString = warUrl.toExternalForm();
+		jetty.setHandler(new WebAppContext(warUrlString, "/"));
 	}
 	
 	public void run() throws Exception {

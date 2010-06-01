@@ -1,4 +1,4 @@
-package net.nordu.saml.signer.servlets;
+package net.nordu.mdx.servlets;
 
 import java.io.IOException;
 
@@ -6,7 +6,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.nordu.saml.signer.MDXServer;
+import net.nordu.mdx.MDXServer;
 
 public class MDXRequest {
 
