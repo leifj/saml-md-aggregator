@@ -1,4 +1,4 @@
-package net.nordu.mdx.servlets;
+package net.nordu.mdx.web;
 
 import java.io.IOException;
 

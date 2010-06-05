@@ -1,6 +1,6 @@
-package net.nordu.mdx.index;
+package net.nordu.mdx.index.neo4j;
 
-import org.neo4j.graphdb.RelationshipType;
+import org.neo4j.api.core.RelationshipType;
 
 /**
  * 

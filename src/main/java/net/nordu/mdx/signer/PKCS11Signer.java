@@ -62,7 +62,6 @@ public class PKCS11Signer implements MetadataSigner {
 	}
 	
 	private KeyStore keyStore;
-	private boolean isInitialized = false;
 	
 	public KeyStore getKeyStore() {
 		return keyStore;
@@ -70,10 +69,6 @@ public class PKCS11Signer implements MetadataSigner {
 	
 	@Override
 	public Document sign(Document doc, String signer) throws Exception {
-		
-		if (!isInitialized)
-			initialize();
-		
 		if (signer == null)
 			return doc;
 		
@@ -85,7 +80,7 @@ public class PKCS11Signer implements MetadataSigner {
 		Node firstChild = root.getFirstChild();
 		DOMSignContext dsc = new DOMSignContext(signerKey, root, firstChild);
 	
-		//TODO: figure out if we need to allow users to specify the provider...
+		//TODO: figure out if we really need to allow users to specify the provider...
 		String providerName = System.getProperty("jsr105Provider","org.jcp.xml.dsig.internal.dom.XMLDSigRI");
 		XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM",
 				((Class<Provider>)Class.forName(providerName)).newInstance()); 
@@ -109,12 +104,10 @@ public class PKCS11Signer implements MetadataSigner {
 		return doc;
 	}
 	
-	private synchronized void initialize() 
+	
+	public final void initialize() 
 		throws Exception 
 	{
-		if (!isInitialized)
-			return;
-		
 		Class<Provider> providerClass = (Class<Provider>)Class.forName(providerClassName);
 		Constructor<Provider> constructor = providerClass.getConstructor(new Class[] { String.class });
 		Provider cryptoProvider = constructor.newInstance(configName);
@@ -124,7 +117,6 @@ public class PKCS11Signer implements MetadataSigner {
 		
 		keyStore = KeyStore.getInstance("PKCS11");
 		keyStore.load(null,pin);
-		isInitialized = true;
 	}
 
 }

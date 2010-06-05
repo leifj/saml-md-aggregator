@@ -1,6 +1,6 @@
 package net.nordu.mdx.signer;
 
-public interface MetadataSignerPolicy {
+public interface MetadataSignerSelector {
 
 	public String findSignerName(String[] tags);
 	

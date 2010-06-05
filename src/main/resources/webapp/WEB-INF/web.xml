@@ -23,6 +23,6 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>mdx</servlet-name>
-		<url-pattern>/entity/*</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 </web-app>

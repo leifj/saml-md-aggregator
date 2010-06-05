@@ -107,8 +107,9 @@
 		</dependency>
 		<dependency>
 			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-kernel</artifactId>
-			<version>1.0</version>
+			<artifactId>apoc</artifactId>
+			<type>pom</type>
+			<version>1.0-b8-SNAPSHOT</version>
 		</dependency>
 		<!--
 			Core utilities used by other modules. Define this if you use Spring
@@ -277,15 +278,6 @@
 		<repository>
 			<id>neo4j-public-repository</id>
 			<url>http://m2.neo4j.org </url>
-		</repository>
-		<!--
-			repository> <id>spring-ext</id> <name>Spring repo-ext</name>
-			<url>https://springframework.svn.sourceforge.net/svnroot/springframework/repos/repo-ext/</url>
-			</repository
-		-->
-		<repository>
-			<id>neo4j-public-repository</id>
-			<url>http://m2.neo4j.org</url>
 		</repository>
 		<repository>
 			<id>ibiblio mirror</id>
