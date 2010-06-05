@@ -1,5 +1,7 @@
 package net.nordu.mdx.index.neo4j;
 
+import java.util.List;
+
 import net.nordu.mdx.index.MetadataIndex;
 
 import org.neo4j.api.core.NeoService;
@@ -29,22 +31,21 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 	
 	
 	@Override
-	public void add(String id,Document doc) throws Exception {
+	public void update(String id,Document doc) throws Exception {
 		
 	}
-
-
-	@Override
-	public boolean exists(String id) throws Exception {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 
 	@Override
 	public void remove(String id) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public List<String> listIDs() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

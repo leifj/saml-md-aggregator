@@ -21,10 +21,12 @@ public class MetadataScanner {
 	public void run() {
 		try {
 			for (String id: store.listIDs()) {
-				if (!index.exists(id))
-					index.add(id,store.load(id));
-				else
+				index.update(id,store.load(id));
+			}
+			for (String id: index.listIDs()) {
+				if (!store.exists(id)) {
 					index.remove(id);
+				}
 			}
 		} catch (Exception ex) {
 			log.warn(ex.getMessage());

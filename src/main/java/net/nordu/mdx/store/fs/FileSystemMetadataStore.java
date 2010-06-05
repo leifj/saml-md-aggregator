@@ -59,4 +59,10 @@ public class FileSystemMetadataStore implements MetadataStore {
 		}
 	}
 
+	@Override
+	public boolean exists(String id) throws Exception {
+		File f = new File(getDir(),id+".xml");
+		return f.exists() && f.canRead();
+	}
+
 }
