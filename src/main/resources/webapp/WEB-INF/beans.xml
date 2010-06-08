@@ -10,10 +10,10 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 	<context:annotation-config />
 	<context:component-scan base-package="net.nordu.mdx" />
 
-	<bean id="neoService" class="org.neo4j.api.core.EmbeddedNeo"
-		init-method="enableRemoteShell" destroy-method="shutdown">
+	<bean id="neoService" class="org.neo4j.graphdb.EmbeddedGraphDatabase" init-method="enableRemoteShell" destroy-method="shutdown">
 		<constructor-arg index="0" value=".neo4j" />
 	</bean>
+	
 	<bean id="indexService" class="org.neo4j.util.index.NeoIndexService"
 		destroy-method="shutdown">
 		<constructor-arg index="0" ref="neoService" />

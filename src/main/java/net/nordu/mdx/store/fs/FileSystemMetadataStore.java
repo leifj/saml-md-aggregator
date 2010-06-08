@@ -51,6 +51,8 @@ public class FileSystemMetadataStore implements MetadataStore {
 		File f = new File(getDir(),id+".xml");
 		if (f.exists() && f.canRead()) {		
 			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			dbf.setNamespaceAware(true);
+			dbf.setXIncludeAware(true);
 			DocumentBuilder db = dbf.newDocumentBuilder();
 			Document doc = db.parse(f);
 			return doc;

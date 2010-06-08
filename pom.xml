@@ -68,7 +68,7 @@
 		</plugins>
 	</build>
 	<properties>
-    	<org.springframework.version>3.0.0.RELEASE</org.springframework.version>
+		<org.springframework.version>3.0.0.RELEASE</org.springframework.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -107,9 +107,9 @@
 		</dependency>
 		<dependency>
 			<groupId>org.neo4j</groupId>
-			<artifactId>apoc</artifactId>
+			<artifactId>neo4j-apoc</artifactId>
 			<type>pom</type>
-			<version>1.0-b8-SNAPSHOT</version>
+			<version>1.1-SNAPSHOT</version>
 		</dependency>
 		<!--
 			Core utilities used by other modules. Define this if you use Spring
@@ -265,6 +265,19 @@
 		</dependency>
 
 
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.4</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.googlecode.ehcache-spring-annotations</groupId>
+			<artifactId>ehcache-spring-annotations</artifactId>
+			<version>1.0.5</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>

@@ -1,6 +1,6 @@
 package net.nordu.mdx.index.neo4j;
 
-import org.neo4j.api.core.RelationshipType;
+import org.neo4j.graphdb.RelationshipType;
 
 /**
  * 
@@ -8,24 +8,17 @@ import org.neo4j.api.core.RelationshipType;
  * 
  * 
  *    entity-node
- *    	entityID:
- *      fileName:
+ *    	entity.entityID: String
+ *      entity.entityID-sha1: String
+ *      entity.id: String
  *      
- *    hash-node:
- *    	hashValue: <transform of entityID>
- *      hashType: sha1 
+ *    attribute-value-node
+ *      attribute.value: String
  *    
- *    tag-node
- *    	name:
- *    
- *    (entity-node) --hasTag-->   (tag-node)
- *    										  --associatedEntity-> (entity-node)
- *    (entity-node) --hasHash-->  (hash-node)
+ *    (entity-node) --hasAttribute{name:String,nameForm:String}--> (attribute-value-node)
  *    
  */
 
 public enum MetadataRelationshipTypes implements RelationshipType {
-	HAS_TAG,
-	HAS_HASH,
-	ASSOCIATED_ENTITY,
+	HAS_ATTRIBUTE
 }
