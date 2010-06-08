@@ -36,42 +36,9 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			<!--
-				plugin> <groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId> <configuration> <archive>
-				<manifest> <addClasspath>true</addClasspath>
-				<classpathPrefix>WEB-INF/lib/</classpathPrefix>
-				<mainClass>net.nordu.mdx.MDXServer</mainClass> </manifest>
-				</archive> </configuration> </plugin
-			-->
 			<plugin>
 				<groupId>net.sf.alchim</groupId>
 				<artifactId>winstone-maven-plugin</artifactId>
-				<configuration>
-					<cmdLineOptions>
-						<property>
-							<name>httpPort</name>
-							<value>80</value>
-						</property>
-						<property>
-							<name>ajp13Port</name>
-							<value>-1</value>
-						</property>
-						<property>
-							<name>controlPort</name>
-							<value>-1</value>
-						</property>
-						<property>
-							<name>directoryListings</name>
-							<value>false</value>
-						</property>
-						<property>
-							<name>useInvoker</name>
-							<value>false</value>
-						</property>
-					</cmdLineOptions>
-				</configuration>
-
 				<executions>
 					<execution>
 						<goals>
@@ -111,10 +78,6 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
-		<!--
-			dependency> <groupId>org.mortbay.jetty</groupId>
-			<artifactId>jetty</artifactId> <version>6.1.24</version> </dependency
-		-->
 		<dependency>
 			<groupId>org.apache.santuario</groupId>
 			<artifactId>xmlsec</artifactId>

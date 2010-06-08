@@ -7,11 +7,11 @@
 	<context:annotation-config />
 	<context:component-scan base-package="net.nordu.mdx" />
 
-	<bean id="neoService" class="org.neo4j.graphdb.EmbeddedGraphDatabase" init-method="enableRemoteShell" destroy-method="shutdown">
+	<bean id="neoService" class="org.neo4j.kernel.EmbeddedGraphDatabase" init-method="enableRemoteShell" destroy-method="shutdown">
 		<constructor-arg index="0" value=".neo4j" />
 	</bean>
 	
-	<bean id="indexService" class="org.neo4j.util.index.NeoIndexService"
+	<bean id="indexService" class="org.neo4j.index.lucene.LuceneIndexService"
 		destroy-method="shutdown">
 		<constructor-arg index="0" ref="neoService" />
 	</bean>
