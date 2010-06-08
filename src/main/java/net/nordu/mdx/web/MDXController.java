@@ -36,7 +36,7 @@ public class MDXController {
 	private MetadataSigner signer;
 	
 	@Autowired
-	private MetadataSignerSelector signerPolicy;
+	private MetadataSignerSelector signerSelector;
 	
 	@RequestMapping(value="/{tags}",method=RequestMethod.GET)
 	public String mdx(@PathVariable("tags") String plustags, Model model) throws Exception {
@@ -46,7 +46,7 @@ public class MDXController {
 			docs.add(store.load(id));
 		}
 		model.addAttribute("entities", docs);
-		String signerName = signerPolicy.findSignerName(tags);
+		String signerName = signerSelector.findSignerName(tags);
 		if (docs.size() == 1) {
 			model.addAttribute("entity", signer.sign(docs.get(0),signerName));
 		} else {

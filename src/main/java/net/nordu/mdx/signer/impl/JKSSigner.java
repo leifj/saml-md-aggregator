@@ -1,5 +1,8 @@
-package net.nordu.mdx.signer;
+package net.nordu.mdx.signer.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.security.KeyStore;
 import java.security.PrivateKey;
@@ -23,15 +26,19 @@ import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
+import net.nordu.mdx.signer.MetadataSigner;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 @SuppressWarnings("restriction")
-public class PKCS11Signer implements MetadataSigner {
+public class JKSSigner implements MetadataSigner {
 
 	private char[] pin;
 	private String providerClassName;
 	private String configName;
+	private String providerType;
+	private String keyStoreLocation;
 	
 	public void setPin(char[] pin) {
 		this.pin = pin;
@@ -61,11 +68,23 @@ public class PKCS11Signer implements MetadataSigner {
 		this.configName = configName;
 	}
 	
-	private KeyStore keyStore;
-	
-	public KeyStore getKeyStore() {
-		return keyStore;
+	public void setProviderType(String providerType) {
+		this.providerType = providerType;
 	}
+	
+	public String getProviderType() {
+		return providerType;
+	}
+	
+	public String getKeyStoreLocation() {
+		return keyStoreLocation;
+	}
+	
+	public void setKeyStoreLocation(String keyStoreLocation) {
+		this.keyStoreLocation = keyStoreLocation;
+	}
+	
+	private KeyStore keyStore;
 	
 	@Override
 	public Document sign(Document doc, String signer) throws Exception {
@@ -73,8 +92,8 @@ public class PKCS11Signer implements MetadataSigner {
 			return doc;
 		
 		char[] pin = getPin();
-		PrivateKey signerKey = (PrivateKey)getKeyStore().getKey(signer, pin);
-		X509Certificate certificate = (X509Certificate)getKeyStore().getCertificate(signer);
+		PrivateKey signerKey = (PrivateKey)keyStore.getKey(signer, pin);
+		X509Certificate certificate = (X509Certificate)keyStore.getCertificate(signer);
 		//Key key = server.getKeyStore().getKey(signer, pin); 
 		Node root = doc.getDocumentElement();
 		Node firstChild = root.getFirstChild();
@@ -108,15 +127,29 @@ public class PKCS11Signer implements MetadataSigner {
 	public final void initialize() 
 		throws Exception 
 	{
-		Class<Provider> providerClass = (Class<Provider>)Class.forName(providerClassName);
-		Constructor<Provider> constructor = providerClass.getConstructor(new Class[] { String.class });
-		Provider cryptoProvider = constructor.newInstance(configName);
-		int pos = Security.addProvider(cryptoProvider);
-		if (pos == -1)
-			throw new IllegalArgumentException("Unable to add crypto provider: "+providerClassName);
+		if (getProviderClassName() != null && getProviderClassName().length() > 0) {
+			Class<Provider> providerClass = (Class<Provider>)Class.forName(getProviderClassName());
+			Provider cryptoProvider = null;
+			
+			if (getConfigName() != null && getConfigName().length() > 0) {
+				Constructor<Provider> constructor = providerClass.getConstructor(new Class[] { String.class });
+				cryptoProvider = constructor.newInstance(getConfigName());
+			} else {
+				cryptoProvider = providerClass.newInstance();
+			}
+			assert(cryptoProvider != null);
+			int pos = Security.addProvider(cryptoProvider);
+			if (pos == -1)
+				throw new IllegalArgumentException("Unable to add crypto provider: "+getProviderClassName());
+		}
 		
-		keyStore = KeyStore.getInstance("PKCS11");
-		keyStore.load(null,pin);
+		keyStore = KeyStore.getInstance(getProviderType());
+		InputStream ksIn = null;
+		if (keyStoreLocation != null && keyStoreLocation.length() > 0) {
+			File ksFile = new File(keyStoreLocation);
+			ksIn = new FileInputStream(ksFile);
+		}
+		keyStore.load(ksIn,pin);
 	}
 
 }
