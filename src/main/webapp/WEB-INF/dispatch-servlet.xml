@@ -28,9 +28,7 @@
 		<property name="resourceLoaderPath" value="WEB-INF/views/" />
 	</bean>
 
-	<bean
-		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver"
-		p:order="0">
+	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 		<property name="mediaTypes">
 			<map>
 				<entry key="atom" value="application/atom+xml" />

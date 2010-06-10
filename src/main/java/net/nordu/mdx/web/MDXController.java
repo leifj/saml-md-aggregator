@@ -3,6 +3,12 @@ package net.nordu.mdx.web;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import net.nordu.mdx.index.MetadataIndex;
 import net.nordu.mdx.signer.MetadataSigner;
 import net.nordu.mdx.signer.MetadataSignerSelector;
@@ -36,14 +42,13 @@ public class MDXController {
 	private MetadataSignerSelector signerSelector;
 	
 	@RequestMapping(value="/{tags}",method=RequestMethod.GET)
-	public String mdx(@PathVariable("tags") String plustags, Model model) throws Exception {
+	public void mdx(@PathVariable("tags") String plustags, HttpServletResponse response) throws Exception {
 		String[] tags = plustags.split("\\+");
 		List<EntityDescriptorType> docs = new ArrayList<EntityDescriptorType>();
 		for (String id: index.find(tags)) {
 			System.err.println(id);
 			docs.add(store.load(id));
 		}
-		model.addAttribute("entities", docs);
 		String signerName = signerSelector.findSignerName(tags);
 		if (docs.size() == 0)
 			throw new MetadataNotFoundException();
@@ -56,7 +61,10 @@ public class MDXController {
 			toBeSigned = collection.getDomNode();
 		}
 		signer.sign(toBeSigned, signerName);
-		model.addAttribute("signed",toBeSigned);
-		return "mdx";
+		
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer t = tf.newTransformer();
+		response.setContentType("application/samlmetadata+xml");
+		t.transform(new DOMSource(toBeSigned),new StreamResult(response.getOutputStream()));
 	}
 }
