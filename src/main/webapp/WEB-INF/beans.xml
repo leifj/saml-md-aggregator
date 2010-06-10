@@ -7,45 +7,72 @@
 	<context:annotation-config />
 	<context:component-scan base-package="net.nordu.mdx" />
 
-	<bean id="neoService" class="org.neo4j.kernel.EmbeddedGraphDatabase" init-method="enableRemoteShell" destroy-method="shutdown">
-		<constructor-arg index="0" value=".neo4j" />
+	<bean id="neoService" class="org.neo4j.kernel.EmbeddedGraphDatabase"
+		init-method="enableRemoteShell" destroy-method="shutdown">
+		<constructor-arg index="0" value="${mdx.neo4j.directory}" />
 	</bean>
-	
-	<bean id="indexService" class="org.neo4j.index.lucene.LuceneIndexService"
+
+	<bean id="indexService" depends-on="neoService" class="org.neo4j.index.lucene.LuceneIndexService"
 		destroy-method="shutdown">
 		<constructor-arg index="0" ref="neoService" />
 	</bean>
-	
-	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location">
 			<value>classpath:mdx.properties</value>
 		</property>
 	</bean>
-	
-	<bean id="signer" class="net.nordu.mdx.signer.impl.JKSSigner" init-method="initialize">
-		<property name="providerClassName"><value>${mdx.signer.provider}</value></property>
-		<property name="providerType"><value>${mdx.signer.providertype}</value></property>
-		<property name="pin"><value>${mdx.signer.pin}</value></property>
-		<property name="configName"><value>${mdx.signer.config}</value></property>
-		<property name="keyStoreLocation"><value>${mdx.signer.keystore}</value></property>
+
+	<bean id="signer" class="net.nordu.mdx.signer.impl.JKSSigner"
+		init-method="initialize">
+		<property name="providerClassName">
+			<value>${mdx.signer.provider.class}</value>
+		</property>
+		<property name="providerType">
+			<value>${mdx.signer.provider.type}</value>
+		</property>
+		<property name="pin">
+			<value>${mdx.signer.pin}</value>
+		</property>
+		<property name="configName">
+			<value>${mdx.signer.config}</value>
+		</property>
+		<property name="keyStoreLocation">
+			<value>${mdx.signer.keystore}</value>
+		</property>
 	</bean>
-	
+
 	<bean id="signerSelector" class="net.nordu.mdx.signer.impl.StaticSignerSelector">
-		<property name="signerName"><value>${mdx.signer.alias}</value></property>
+		<property name="signerName">
+			<value>${mdx.signer.alias}</value>
+		</property>
 	</bean>
-	
+
 	<bean id="index" class="net.nordu.mdx.index.neo4j.Neo4JMetadataIndex" />
-	
+
 	<!-- Check for new metadata every 30 seconds -->
-	<bean id="scanner" class="net.nordu.mdx.scanner.MetadataScanner"/>
-	<bean id="scannerTask" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-    	<property name="delay" value="2000" />
-    	<property name="period" value="30000" />
-    	<property name="timerTask" ref="scanner" />
+	<bean id="scanner" class="net.nordu.mdx.scanner.MetadataScanner" />
+	<bean id="scannerScheduler" class="org.springframework.scheduling.timer.ScheduledTimerTask">
+		<property name="delay" value="2000" />
+		<property name="period" value="30000" />
+		<property name="timerTask" ref="scanner" />
 	</bean>
-	
+
+	<bean id="timerFactory" depends-on="indexService" class="org.springframework.scheduling.timer.TimerFactoryBean">
+		<property name="scheduledTimerTasks">
+			<list>
+				<!-- see the example above -->
+				<ref bean="scannerScheduler" />
+			</list>
+		</property>
+	</bean>
+
+
 	<bean id="store" class="net.nordu.mdx.store.fs.FileSystemMetadataStore">
-		<property name="directory"><value>${mdx.directory}</value></property>
+		<property name="directory">
+			<value>${mdx.directory}</value>
+		</property>
 	</bean>
 
 </beans>

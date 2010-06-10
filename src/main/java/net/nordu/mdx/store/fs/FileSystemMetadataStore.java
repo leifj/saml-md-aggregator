@@ -6,9 +6,15 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import net.nordu.mdx.store.MetadataStore;
 
+import org.oasis.saml.metadata.EntityDescriptorDocument;
+import org.oasis.saml.metadata.EntityDescriptorType;
 import org.w3c.dom.Document;
 
 public class FileSystemMetadataStore implements MetadataStore {
@@ -47,15 +53,12 @@ public class FileSystemMetadataStore implements MetadataStore {
 	}
 
 	@Override
-	public Document load(String id) throws Exception {
+	public EntityDescriptorType load(String id) throws Exception {
 		File f = new File(getDir(),id+".xml");
-		if (f.exists() && f.canRead()) {		
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			dbf.setNamespaceAware(true);
-			dbf.setXIncludeAware(true);
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(f);
-			return doc;
+		if (f.exists()) { 
+			EntityDescriptorDocument doc = EntityDescriptorDocument.Factory.parse(f);
+			EntityDescriptorType entity = doc.getEntityDescriptor();
+			return entity;
 		} else {
 			return null;
 		}

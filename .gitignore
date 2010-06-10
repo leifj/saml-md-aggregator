@@ -1,1 +1,3 @@
 target
+.neo4j
+*.jks

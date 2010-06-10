@@ -13,6 +13,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.index.IndexService;
+import org.oasis.saml.metadata.EntityDescriptorType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 
@@ -38,10 +39,17 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 	
 	@Override
 	public Iterable<String> find(String[] tags) throws Exception {
-		Collection<Node> nodes = getNodesByAttribute(NF_NONE, "tags", tags[0]);
 		ArrayList<String> ids = new ArrayList<String>();
-		for (Node n: nodes) {
-			if (hasAttributes(n,NF_NONE,"tags",tags))
+		for (Node n: indexService.getNodes(ENTITY_ID, tags[0])) {
+			if (hasAttributes(n,NF_NONE,"tags",tags,1))
+				ids.add((String)n.getProperty(ENTITY_ID));
+		}
+		
+		if (ids.size() > 0)
+			return ids;
+		
+		for (Node n: getNodesByAttribute(NF_NONE, "tags", tags[0])) {
+			if (hasAttributes(n,NF_NONE,"tags",tags,0))
 				ids.add((String)n.getProperty(ENTITY_ID));
 		}
 		return ids;
@@ -52,9 +60,9 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 		indexService.index(n,key,value);
 	}
 	
-	private boolean hasAttributes(Node entityNode, String nameFormat, String name, String[] values) {
-		for (String v: values) {
-			if (!hasAttribute(entityNode,nameFormat,name,v))
+	private boolean hasAttributes(Node entityNode, String nameFormat, String name, String[] values, int offset) {
+		for (int i = offset; i < values.length; i++) {
+			if (!hasAttribute(entityNode,nameFormat,name,values[i]))
 				return false;
 		}
 		return true;
@@ -74,8 +82,10 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 	}
 	
 	@Override
-	public void update(String id,Document doc) throws Exception {
+	public void update(String id,EntityDescriptorType entity) throws Exception {
 		assert(id != null && id.length() > 0);
+		System.err.println(id);
+		System.err.println(entity.getEntityID());
 		Transaction tx = neoService.beginTx();
 		try {
 			Node entityNode = indexService.getSingleNode(ENTITY_ID, id);
@@ -84,6 +94,8 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 				_set(entityNode,ENTITY_ID,id);
 			}
 	
+			System.err.println(entityNode);
+			
 			/*
 			 * TODO: make this a bit more effective perhaps - not sure if it is worth it though...
 			 */
@@ -91,13 +103,12 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 				r.delete();
 			}
 			
-			String entityID = MetadataUtils.getEntityID(doc);
+			String entityID = entity.getEntityID();
 			addAttribute(entityNode,NF_INTERNAL,"entityID",entityID, false);
 			addAttribute(entityNode,NF_INTERNAL,"entityIDHash","{sha1}"+DigestUtils.shaHex(entityID), false);
 			
 			final Node n = entityNode;
-			MetadataUtils.withAttributes(doc, new MetadataUtils.AttributeCallback() {
-				
+			MetadataUtils.withAttributes(entity, new MetadataUtils.AttributeCallback() {
 				@Override
 				public void attribute(String nameFormat, String name, String value) {
 					addAttribute(n,nameFormat,name,value, false);

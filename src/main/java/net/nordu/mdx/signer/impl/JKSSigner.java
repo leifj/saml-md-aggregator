@@ -28,7 +28,6 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
 import net.nordu.mdx.signer.MetadataSigner;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 @SuppressWarnings("restriction")
@@ -87,17 +86,27 @@ public class JKSSigner implements MetadataSigner {
 	private KeyStore keyStore;
 	
 	@Override
-	public Document sign(Document doc, String signer) throws Exception {
+	public void sign(Node node, String signer) throws Exception {
 		if (signer == null)
-			return doc;
+			throw new IllegalArgumentException("Missing signer");
+		
+		if (node == null)
+			throw new IllegalArgumentException("Not signing empty document");
 		
 		char[] pin = getPin();
+		System.err.println(signer);
 		PrivateKey signerKey = (PrivateKey)keyStore.getKey(signer, pin);
+		if (signerKey == null)
+			throw new IllegalArgumentException("No such signer: "+signer);
+		
 		X509Certificate certificate = (X509Certificate)keyStore.getCertificate(signer);
 		//Key key = server.getKeyStore().getKey(signer, pin); 
-		Node root = doc.getDocumentElement();
-		Node firstChild = root.getFirstChild();
-		DOMSignContext dsc = new DOMSignContext(signerKey, root, firstChild);
+		System.err.println(node);
+		assert(node != null);
+		Node firstChild = node.getFirstChild();
+		assert(firstChild != null);
+		System.err.println(firstChild);
+		DOMSignContext dsc = new DOMSignContext(signerKey, node, firstChild);
 	
 		//TODO: figure out if we really need to allow users to specify the provider...
 		String providerName = System.getProperty("jsr105Provider","org.jcp.xml.dsig.internal.dom.XMLDSigRI");
@@ -120,7 +129,6 @@ public class JKSSigner implements MetadataSigner {
 		KeyInfo ki = kif.newKeyInfo(Collections.singletonList(xd));
 		XMLSignature signature = fac.newXMLSignature(si, ki); 
 		signature.sign(dsc);
-		return doc;
 	}
 	
 	

@@ -41,17 +41,17 @@
 		</property>
 		<property name="viewResolvers">
 			<list>
-				<bean class="se.swami.saml.metadata.web.spring.StaticViewResolver"
+				<bean class="net.nordu.mdx.spring.StaticViewResolver"
 					p:order="1">
 					<constructor-arg>
 						<bean
 							class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
 					</constructor-arg>
 				</bean>
-				<bean class="se.swami.saml.metadata.web.spring.StaticViewResolver"
+				<bean class="net.nordu.mdx.spring.StaticViewResolver"
 					p:order="2">
 					<constructor-arg>
-						<bean class="se.swami.saml.metadata.web.spring.PrettyPrintXmlBeansView"
+						<bean class="net.nordu.mdx.spring.PrettyPrintDOMView"
 							p:contentType="application/samlmetadata+xml" />
 					</constructor-arg>
 				</bean>

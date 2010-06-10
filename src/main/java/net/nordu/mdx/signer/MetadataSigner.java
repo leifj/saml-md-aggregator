@@ -1,9 +1,9 @@
 package net.nordu.mdx.signer;
 
-import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 public interface MetadataSigner {
 
-	public Document sign(Document doc, String signerName) throws Exception;
+	public void sign(Node doc, String signerName) throws Exception;
 	
 }
