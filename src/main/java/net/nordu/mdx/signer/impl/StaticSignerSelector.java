@@ -1,18 +1,19 @@
 package net.nordu.mdx.signer.impl;
 
 import net.nordu.mdx.signer.MetadataSignerSelector;
+import net.nordu.mdx.signer.SignerInfo;
 
 public class StaticSignerSelector implements MetadataSignerSelector {
 
-	private String signerName;
+	private SignerInfo signerInfo;
 
-	public void setSignerName(String signerName) {
-		this.signerName = signerName;
+	public void setSigneInfo(SignerInfo signerInfo) {
+		this.signerInfo = signerInfo;
 	}
 	
 	@Override
-	public String findSignerName(String[] tags) {
-		return signerName;
+	public SignerInfo findSignerInfo(String[] tags) {
+		return signerInfo;
 	}
 
 }

@@ -1,6 +1,7 @@
 package net.nordu.mdx.web;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -12,9 +13,12 @@ import javax.xml.transform.stream.StreamResult;
 import net.nordu.mdx.index.MetadataIndex;
 import net.nordu.mdx.signer.MetadataSigner;
 import net.nordu.mdx.signer.MetadataSignerSelector;
+import net.nordu.mdx.signer.SignerInfo;
 import net.nordu.mdx.store.MetadataStore;
 import net.nordu.mdx.utils.MetadataUtils;
 
+import org.apache.xmlbeans.GDuration;
+import org.apache.xmlbeans.GDurationBuilder;
 import org.oasis.saml.metadata.EntitiesDescriptorType;
 import org.oasis.saml.metadata.EntityDescriptorType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,18 +53,23 @@ public class MDXController {
 			System.err.println(id);
 			docs.add(store.load(id));
 		}
-		String signerName = signerSelector.findSignerName(tags);
+		SignerInfo signerInfo = signerSelector.findSignerInfo(tags);
 		if (docs.size() == 0)
 			throw new MetadataNotFoundException();
 		
 		Node toBeSigned = null;
+		Calendar validUntil = signerInfo.getValidUntil();
+		GDuration duration = signerInfo.getCacheDuration() == null ? null : new GDuration(signerInfo.getCacheDuration());
 		if (docs.size() == 1) {
-			toBeSigned = docs.get(0).getDomNode();
+			EntityDescriptorType entity = docs.get(0);
+			entity.setValidUntil(validUntil);
+			entity.setCacheDuration(duration);
+			toBeSigned = entity.getDomNode();
 		} else {
-			EntitiesDescriptorType collection = MetadataUtils.aggregate(docs, tags[0], null, null);
+			EntitiesDescriptorType collection = MetadataUtils.aggregate(docs, tags[0], validUntil, duration);
 			toBeSigned = collection.getDomNode();
 		}
-		signer.sign(toBeSigned, signerName);
+		signer.sign(toBeSigned, signerInfo.getAlias());
 		
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer t = tf.newTransformer();

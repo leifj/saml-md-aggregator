@@ -44,8 +44,12 @@
 	</bean>
 
 	<bean id="signerSelector" class="net.nordu.mdx.signer.impl.StaticSignerSelector">
-		<property name="signerName">
-			<value>${mdx.signer.alias}</value>
+		<property name="signerInfo">
+			<bean class="net.nordu.mdx.signer.impl.StaticSignerInfo">
+				<property name="alias"><value>${mdx.signer.alias}</value></property>
+				<property name="validity"><value>${mdx.signer.validity}</value></property>
+				<property name="cacheDuration"><value>${mdx.signer.cacheduration}</value></property>
+			</bean>
 		</property>
 	</bean>
 
