@@ -60,10 +60,24 @@ public class MDXController {
 		Node toBeSigned = null;
 		Calendar validUntil = signerInfo.getValidUntil();
 		GDuration duration = signerInfo.getCacheDuration() == null ? null : new GDuration(signerInfo.getCacheDuration());
+		
+		for (EntityDescriptorType entity: docs) {
+			if (entity.isSetID())
+				entity.unsetID();
+			if (entity.isSetCacheDuration())
+				entity.unsetCacheDuration();
+			if (entity.isSetValidUntil())
+				entity.unsetValidUntil();
+			if (entity.isSetSignature())
+				entity.unsetSignature();
+		}
+		
 		if (docs.size() == 1) {
 			EntityDescriptorType entity = docs.get(0);
-			entity.setValidUntil(validUntil);
-			entity.setCacheDuration(duration);
+			if (validUntil != null)
+				entity.setValidUntil(validUntil);
+			if (duration != null)
+				entity.setCacheDuration(duration);
 			toBeSigned = entity.getDomNode();
 		} else {
 			EntitiesDescriptorType collection = MetadataUtils.aggregate(docs, tags[0], validUntil, duration);

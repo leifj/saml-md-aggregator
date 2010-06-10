@@ -22,11 +22,8 @@ public class StaticSignerInfo implements SignerInfo {
 	}
 	
 	public void setValidity(String validityStr) {
-		setValidity(Integer.parseInt(validityStr));
-	}
-	
-	public void setValidity(int validity) {
-		this.validity = validity;
+		if (!StringUtils.isEmpty(validityStr))
+			this.validity = Integer.parseInt(validityStr);
 	}
 	
 	@Override

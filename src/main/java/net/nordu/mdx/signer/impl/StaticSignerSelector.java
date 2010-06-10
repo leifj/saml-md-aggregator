@@ -7,7 +7,7 @@ public class StaticSignerSelector implements MetadataSignerSelector {
 
 	private SignerInfo signerInfo;
 
-	public void setSigneInfo(SignerInfo signerInfo) {
+	public void setSignerInfo(SignerInfo signerInfo) {
 		this.signerInfo = signerInfo;
 	}
 	

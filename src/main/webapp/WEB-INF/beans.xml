@@ -22,6 +22,7 @@
 		<property name="location">
 			<value>classpath:mdx.properties</value>
 		</property>
+		<property name="systemPropertiesMode"><value>2</value></property>
 	</bean>
 
 	<bean id="signer" class="net.nordu.mdx.signer.impl.JKSSigner"
