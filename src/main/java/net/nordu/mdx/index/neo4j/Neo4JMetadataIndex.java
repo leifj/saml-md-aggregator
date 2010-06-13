@@ -1,7 +1,9 @@
 package net.nordu.mdx.index.neo4j;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 
 import net.nordu.mdx.index.MetadataIndex;
 import net.nordu.mdx.utils.MetadataUtils;
@@ -26,6 +28,7 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 	private static final String NF_UNSPECIFIED = "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified";
 	private static final String NF_NONE = "";
 	private static final String NF_INTERNAL = "internal";
+	private static final String ENTITY_LM = "entity.lastModified";
 
 	@Autowired
 	private GraphDatabaseService neoService;
@@ -93,9 +96,9 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 				entityNode = neoService.createNode();
 				_set(entityNode,ENTITY_ID,id);
 			}
-	
 			System.err.println(entityNode);
-			
+			Date now = new Date();
+			entityNode.setProperty(ENTITY_LM, new Long(now.getTime()));
 			/*
 			 * TODO: make this a bit more effective perhaps - not sure if it is worth it though...
 			 */
@@ -188,5 +191,25 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 			}
 		}
 		return nodes;
+	}
+
+	@Override
+	public Calendar lastModified(String id) {
+		Calendar t = Calendar.getInstance();
+		long ts = 0;
+		Node entityNode = indexService.getSingleNode(ENTITY_ID, id);
+		if (entityNode == null)
+			throw new IllegalArgumentException("No such entity in index: "+id);
+		if (entityNode.hasProperty(ENTITY_LM)) {
+			ts = ((Long)entityNode.getProperty(ENTITY_LM, new Long(0))).longValue();
+		}
+		t.setTimeInMillis(ts);
+		return t;
+	}
+
+	@Override
+	public boolean exists(String id) {
+		Node entityNode = indexService.getSingleNode(ENTITY_ID, id);
+		return entityNode != null;
 	}
 }

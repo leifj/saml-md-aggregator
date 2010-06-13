@@ -1,8 +1,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:integration="http://www.springframework.org/schema/integration"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context 
+                        http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/integration 
+                        http://www.springframework.org/schema/integration/spring-integration-1.0.xsd
+            			http://www.springframework.org/schema/integration/stream 
+            			http://www.springframework.org/schema/integration/stream/spring-integration-stream-1.0.xsd">
 
 	<context:annotation-config />
 	<context:component-scan base-package="net.nordu.mdx" />
@@ -73,11 +80,20 @@
 		</property>
 	</bean>
 
-
 	<bean id="store" class="net.nordu.mdx.store.fs.FileSystemMetadataStore">
 		<property name="directory">
 			<value>${mdx.directory}</value>
 		</property>
 	</bean>
+	
+	<integration:poller max-messages-per-poll="10" id="defaultPoller" default="true">
+		<integration:interval-trigger interval="1000" />
+	</integration:poller>
+	<integration:gateway service-interface="net.nordu.mdx.scanner.MetadataChangeNotifier" id="changeNotifier"/>
+	<integration:channel id="changes">
+		<integration:queue/>
+	</integration:channel>
+	<bean id="indexer" class="net.nordu.mdx.scanner.MetadataIndexer"/>
+	<integration:service-activator input-channel="changes" method="index" ref="indexer"/>
 
 </beans>

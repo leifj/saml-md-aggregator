@@ -17,17 +17,20 @@ public class MetadataScanner extends TimerTask {
 	private MetadataStore store;
 	@Autowired
 	private MetadataIndex index;
+	@Autowired
+	private MetadataChangeNotifier changeNotifier;
 	
 	public void run() {
 		try {
 			for (String id: store.listIDs()) {
-				log.info(id);
-				index.update(id,store.load(id));
+				if (!index.exists(id))
+					changeNotifier.notifyChange(new MetadataChange(id, MetadataChangeType.ADD));
+				else if (store.lastModified(id).after(index.lastModified(id)))
+					changeNotifier.notifyChange(new MetadataChange(id, MetadataChangeType.MODIFY));
 			}
 			for (String id: index.listIDs()) {
-				if (!store.exists(id)) {
-					index.remove(id);
-				}
+				if (!store.exists(id))
+					changeNotifier.notifyChange(new MetadataChange(id, MetadataChangeType.REMOVE));
 			}
 		} catch (Exception ex) {
 			log.warn(ex.getMessage());

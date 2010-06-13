@@ -2,6 +2,7 @@ package net.nordu.mdx.store.fs;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -64,10 +65,22 @@ public class FileSystemMetadataStore implements MetadataStore {
 		}
 	}
 
+	private File _file(String id) {
+		return new File(getDir(),id+".xml");
+	}
+	
 	@Override
 	public boolean exists(String id) throws Exception {
-		File f = new File(getDir(),id+".xml");
+		File f = _file(id);
 		return f.exists() && f.canRead();
+	}
+
+	@Override
+	public Calendar lastModified(String id) {
+		File f = _file(id);
+		Calendar t = Calendar.getInstance();
+		t.setTimeInMillis(f.lastModified());
+		return t;
 	}
 
 }
