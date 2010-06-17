@@ -5,11 +5,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import net.nordu.mdx.store.MetadataStore;
 
-import org.apache.commons.lang.StringUtils;
 import org.oasis.saml.metadata.EntityDescriptorDocument;
 import org.oasis.saml.metadata.EntityDescriptorType;
+import org.w3c.dom.Document;
 
 public class FileSystemMetadataStore implements MetadataStore {
 
@@ -31,34 +38,24 @@ public class FileSystemMetadataStore implements MetadataStore {
 	
 	@Override
 	public List<String> listIDs() throws Exception {
+		ArrayList<String> ids = new ArrayList<String>();
 		File d = getDir();
 		if (!d.isDirectory())
 			throw new IllegalArgumentException("Not a directory: "+getDirectory());
 		
-		ArrayList<String> ids = new ArrayList<String>();
-		_list(d,ids);
-		return ids;
-	}
-	
-	private void _list(File d, List<String> ids) {
-		for (File f: d.listFiles(new ExtFilter(".xml"))) {
-			if (f.isHidden())
-				continue;
+		for (String fn: d.list()) {
+			int pos = fn.lastIndexOf(".xml");
 			
-			if (f.isFile()) {
-				String p = StringUtils.removeEnd(f.getAbsolutePath(),".xml");
-				String id = StringUtils.removeStart(p,getDir().getAbsolutePath()+File.separator);
-				ids.add(id);
-			} else if (f.isDirectory()) {
-				_list(f,ids);
-			}
+			if (pos > 0)
+				ids.add(fn.substring(0, pos));
 		}
+		
+		return ids;
 	}
 
 	@Override
 	public EntityDescriptorType load(String id) throws Exception {
 		File f = new File(getDir(),id+".xml");
-		System.err.println(f);
 		if (f.exists()) { 
 			EntityDescriptorDocument doc = EntityDescriptorDocument.Factory.parse(f);
 			EntityDescriptorType entity = doc.getEntityDescriptor();

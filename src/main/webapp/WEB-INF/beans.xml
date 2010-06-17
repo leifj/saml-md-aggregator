@@ -66,8 +66,8 @@
 	<!-- Check for new metadata every 30 seconds -->
 	<bean id="scanner" class="net.nordu.mdx.scanner.MetadataScanner" />
 	<bean id="scannerScheduler" class="org.springframework.scheduling.timer.ScheduledTimerTask">
-		<property name="delay"><value>${mdx.scanner.delay}</value></property>
-		<property name="period"><value>${mdx.scanner.period}</value></property>
+		<property name="delay" value="2000" />
+		<property name="period" value="30000" />
 		<property name="timerTask" ref="scanner" />
 	</bean>
 
@@ -91,7 +91,7 @@
 	</integration:poller>
 	<integration:gateway service-interface="net.nordu.mdx.scanner.MetadataChangeNotifier" id="changeNotifier"/>
 	<integration:channel id="changes">
-		<integration:queue capacity="10"/>
+		<integration:queue/>
 	</integration:channel>
 	<bean id="indexer" class="net.nordu.mdx.scanner.MetadataIndexer"/>
 	<integration:service-activator input-channel="changes" method="index" ref="indexer"/>

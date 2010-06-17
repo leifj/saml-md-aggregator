@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 
-import net.nordu.mdx.MetadataException;
+import net.nordu.mdx.MetadataIOException;
 
 import org.apache.xml.security.exceptions.Base64DecodingException;
 import org.apache.xml.security.utils.Base64;
@@ -34,7 +34,7 @@ public class MetadataUtils {
 		"declare namespace md='urn:oasis:names:tc:SAML:2.0:metadata';"+
 		"declare namespace shibmd='urn:mace:shibboleth:metadata:1.0';";
 	
-	public static EntityAttributesType findAttributes(EntityDescriptorType entity) throws MetadataException {
+	public static EntityAttributesType findAttributes(EntityDescriptorType entity) throws MetadataIOException {
 		try {
 			if (entity.getExtensions() == null)
 				return null;
@@ -53,7 +53,7 @@ public class MetadataUtils {
 			}
 			return null;
 		} catch (XmlException ex) {
-			throw new MetadataException(ex);
+			throw new MetadataIOException(ex);
 		}
 	}
 	
@@ -75,7 +75,7 @@ public class MetadataUtils {
 		}
 	}
 	
-	public static XmlObject[] getAttributeAsXML(EntityDescriptorType entity, String attributeName) throws MetadataException {
+	public static XmlObject[] getAttributeAsXML(EntityDescriptorType entity, String attributeName) throws MetadataIOException {
 		EntityAttributesType ea = MetadataUtils.findAttributes(entity);
 		if (ea != null && ea.getAssertionArray() != null && ea.getAssertionArray().length > 0) {
 			AssertionType assertion = ea.getAssertionArray(0);
@@ -90,7 +90,7 @@ public class MetadataUtils {
 		return null;
 	}
 	
-	public static String[] getAttribute(EntityDescriptorType entity, String attributeName) throws MetadataException {
+	public static String[] getAttribute(EntityDescriptorType entity, String attributeName) throws MetadataIOException {
 		XmlObject[] o = getAttributeAsXML(entity, attributeName);
 		if (o == null)
 			return null;
@@ -103,7 +103,7 @@ public class MetadataUtils {
 		return v;
 	}
 	
-	public static boolean hasAttribute(EntityDescriptorType entity, String attributeName, String attributeValue) throws MetadataException {
+	public static boolean hasAttribute(EntityDescriptorType entity, String attributeName, String attributeValue) throws MetadataIOException {
 		XmlObject[] vo = getAttributeAsXML(entity, attributeName);
 		if (vo == null)
 			return false;
@@ -116,7 +116,7 @@ public class MetadataUtils {
 		return false;
 	}
 	
-	public static String[] getMetadataLocations(EntityDescriptorType entity) throws MetadataException {
+	public static String[] getMetadataLocations(EntityDescriptorType entity) throws MetadataIOException {
 		AdditionalMetadataLocationType[] locs = entity.getAdditionalMetadataLocationArray();
 		String[] origin = new String[locs.length];
 		int i = 0;
@@ -128,7 +128,7 @@ public class MetadataUtils {
 		return origin;
 	}
 	
-	public static String getOrigin(EntityDescriptorType entity) throws MetadataException {
+	public static String getOrigin(EntityDescriptorType entity) throws MetadataIOException {
 		AdditionalMetadataLocationType[] locs = entity.getAdditionalMetadataLocationArray();
 		return locs == null || locs.length == 0 ? null : locs[locs.length-1].getStringValue();
 	}
