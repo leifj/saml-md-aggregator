@@ -1,6 +1,6 @@
 package net.nordu.mdx;
 
-public class MetadataIOException extends RuntimeException {
+public class MetadataIOException extends MetadataException {
 
 	private static final long serialVersionUID = -4323006006007227142L;
 	
