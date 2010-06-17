@@ -9,6 +9,8 @@ import net.nordu.mdx.index.MetadataIndex;
 import net.nordu.mdx.utils.MetadataUtils;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Node;
@@ -17,7 +19,6 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.index.IndexService;
 import org.oasis.saml.metadata.EntityDescriptorType;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.w3c.dom.Document;
 
 public class Neo4JMetadataIndex implements MetadataIndex {
 
@@ -29,6 +30,8 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 	private static final String NF_NONE = "";
 	private static final String NF_INTERNAL = "internal";
 	private static final String ENTITY_LM = "entity.lastModified";
+	
+	private static final Log log = LogFactory.getLog(Neo4JMetadataIndex.class);
 
 	@Autowired
 	private GraphDatabaseService neoService;
@@ -107,18 +110,18 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 			}
 			
 			String entityID = entity.getEntityID();
-			addAttribute(entityNode,NF_INTERNAL,"entityID",entityID, false);
-			addAttribute(entityNode,NF_INTERNAL,"entityIDHash","{sha1}"+DigestUtils.shaHex(entityID), false);
+			addAttribute(entityNode,NF_INTERNAL,"entityID",entityID);
+			addAttribute(entityNode,NF_INTERNAL,"entityIDHash","{sha1}"+DigestUtils.shaHex(entityID));
 			
 			final Node n = entityNode;
 			MetadataUtils.withAttributes(entity, new MetadataUtils.AttributeCallback() {
 				@Override
 				public void attribute(String nameFormat, String name, String value) {
-					addAttribute(n,nameFormat,name,value, false);
+					addAttribute(n,nameFormat,name,value);
 				}
 			});
 			
-			addAttribute(entityNode,NF_NONE, "tags", "all", false);
+			addAttribute(entityNode,NF_NONE, "tags", "all");
 			
 			tx.success();
 		} finally {
@@ -160,17 +163,14 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 	}
 	
 	private void addAttribute(Node entityNode, String nameFormat, String name, String value) {
-		addAttribute(entityNode, nameFormat, name, value, true);
-	}
-	
-	private void addAttribute(Node entityNode, String nameFormat, String name, String value, boolean checkForDuplicates) {
+		log.debug(entityNode+": "+nameFormat+"["+name+"]="+value);
 		Node valueNode = indexService.getSingleNode(ATTRIBUTE_VALUE, value);
 		if (valueNode == null) {
 			valueNode = neoService.createNode();
 			_set(valueNode,ATTRIBUTE_VALUE, value);
 		}
 		
-		if (checkForDuplicates && getAttributeValueRelationship(entityNode, nameFormat, name, valueNode) == null) {
+		if (getAttributeValueRelationship(entityNode, nameFormat, name, valueNode) == null) {
 			Relationship r = entityNode.createRelationshipTo(valueNode, MetadataRelationshipTypes.HAS_ATTRIBUTE);
 			r.setProperty(ATTRIBUTE_NAME_FORMAT, nameFormat);
 			r.setProperty(ATTRIBUTE_NAME, name);
