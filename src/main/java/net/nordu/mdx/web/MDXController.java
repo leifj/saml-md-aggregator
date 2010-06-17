@@ -18,12 +18,10 @@ import net.nordu.mdx.store.MetadataStore;
 import net.nordu.mdx.utils.MetadataUtils;
 
 import org.apache.xmlbeans.GDuration;
-import org.apache.xmlbeans.GDurationBuilder;
 import org.oasis.saml.metadata.EntitiesDescriptorType;
 import org.oasis.saml.metadata.EntityDescriptorType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

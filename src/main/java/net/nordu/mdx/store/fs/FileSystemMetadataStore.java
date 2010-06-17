@@ -5,18 +5,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import net.nordu.mdx.store.MetadataStore;
 
 import org.oasis.saml.metadata.EntityDescriptorDocument;
 import org.oasis.saml.metadata.EntityDescriptorType;
-import org.w3c.dom.Document;
 
 public class FileSystemMetadataStore implements MetadataStore {
 

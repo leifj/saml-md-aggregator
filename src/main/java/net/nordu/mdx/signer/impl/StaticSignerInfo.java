@@ -2,9 +2,9 @@ package net.nordu.mdx.signer.impl;
 
 import java.util.Calendar;
 
-import org.apache.commons.lang.StringUtils;
-
 import net.nordu.mdx.signer.SignerInfo;
+
+import org.apache.commons.lang.StringUtils;
 
 public class StaticSignerInfo implements SignerInfo {
 
