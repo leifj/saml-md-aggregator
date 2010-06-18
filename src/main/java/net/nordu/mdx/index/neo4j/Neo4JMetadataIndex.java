@@ -135,9 +135,17 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 		Transaction tx = neoService.beginTx();
 		try {
 			Node entityNode = indexService.getSingleNode(ENTITY_ID, id);
-			if (entityNode != null)
+			if (entityNode != null) {
+				
+				for (Relationship r : entityNode.getRelationships()) {
+					r.delete();
+				}
+				
 				entityNode.delete();
+			}
+			
 			//TODO: do reference counting on the value nodes and remove non-used ones.
+			tx.success();
 		} finally {
 			tx.finish();
 		}
