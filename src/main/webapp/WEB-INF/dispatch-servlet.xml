@@ -31,31 +31,25 @@
 	<bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 		<property name="mediaTypes">
 			<map>
-				<entry key="atom" value="application/atom+xml" />
 				<entry key="html" value="text/html" />
 				<entry key="json" value="application/json" />
-				<entry key="xml" value="application/samlmetadata+xml" />
 			</map>
 		</property>
 		<property name="viewResolvers">
 			<list>
-				<bean class="net.nordu.mdx.spring.StaticViewResolver"
-					p:order="1">
+				<bean class="net.nordu.mdx.spring.StaticViewResolver" p:order="1">
 					<constructor-arg>
-						<bean
-							class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+						<bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+							<property name="renderedAttributes">
+								<set>
+									<value>entity</value>
+									<value>entities</value>
+								</set>
+							</property>
+						</bean>
 					</constructor-arg>
 				</bean>
-				<bean class="net.nordu.mdx.spring.StaticViewResolver"
-					p:order="2">
-					<constructor-arg>
-						<bean class="net.nordu.mdx.spring.PrettyPrintDOMView"
-							p:contentType="application/samlmetadata+xml" />
-					</constructor-arg>
-				</bean>
-				<bean
-					class="org.springframework.web.servlet.view.velocity.VelocityViewResolver"
-					p:order="3">
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver" p:order="2">
 					<property name="suffix" value=".vm" />
 				</bean>
 			</list>

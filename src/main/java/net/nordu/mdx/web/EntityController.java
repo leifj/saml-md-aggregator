@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.nordu.mdx.MetadataException;
 import net.nordu.mdx.index.MetadataIndex;
 import net.nordu.mdx.store.MetadataStore;
 import net.nordu.mdx.utils.MetadataUtils;
@@ -31,10 +30,10 @@ public class EntityController {
 		String[] tags = plustags.split("\\+");
 		List<EntityDescriptorType> docs = new ArrayList<EntityDescriptorType>();
 		for (String id: index.find(tags)) {
-			System.err.println(id);
 			docs.add(store.load(id));
 		}
 		
+		model.addAttribute("tags",plustags);
 		model.addAttribute("metadataUtils",new MetadataUtils());
 		model.addAttribute("now",new Date());
 		if (docs.size() == 1) {
