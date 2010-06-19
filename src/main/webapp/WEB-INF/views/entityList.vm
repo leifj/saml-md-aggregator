@@ -1,11 +1,12 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
 <head>
-<title>${entities.name}</title>
+<title>${tags}</title>
 </head>
 <body>
-<h1>${entities.name}</h1>
+<h1>${tags}</h1>
 <table>
-#foreach($entity in ${entities.entityDescriptorArray})
+#foreach($entity in ${entities})
 #set ($isIdP = $metadataUtils.isIdP($entity))
 #set ($isSP = $metadataUtils.isSP($entity))
 #if ($isSP)
@@ -16,7 +17,7 @@
 #end
 	<tr>
 	    <td>${type}</td>
-		<td><a href="#springUrl("/md/entity/id/${entity.ID}.html")">${entity.entityID}</a></td>
+		<td><a href="#springUrl("/md/${entity.id}.html")">${entity.entityID}</a></td>
 #set ($validUntil = $entity.validUntil)
 #if ($validUntil)
 		<td>$validUntil</td>
