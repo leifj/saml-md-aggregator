@@ -293,6 +293,13 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>velocity-tools</groupId>
+			<artifactId>velocity-tools</artifactId>
+			<version>1.4</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>

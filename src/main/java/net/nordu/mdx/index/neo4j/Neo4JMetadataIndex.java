@@ -121,6 +121,14 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 				}
 			});
 			
+			String type = null;
+			if (MetadataUtils.isIdP(entity))
+				type ="idp";
+			if (MetadataUtils.isSP(entity))
+				type = "sp";
+			
+			if (type != null)
+				addAttribute(entityNode,NF_NONE, "tags", type);
 			addAttribute(entityNode,NF_NONE, "tags", "all");
 			
 			tx.success();

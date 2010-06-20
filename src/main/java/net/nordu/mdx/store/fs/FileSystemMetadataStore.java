@@ -51,6 +51,7 @@ public class FileSystemMetadataStore implements MetadataStore {
 		if (f.exists()) { 
 			EntityDescriptorDocument doc = EntityDescriptorDocument.Factory.parse(f);
 			EntityDescriptorType entity = doc.getEntityDescriptor();
+			entity.setID(id);
 			return entity;
 		} else {
 			return null;

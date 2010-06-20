@@ -49,8 +49,10 @@
 						</bean>
 					</constructor-arg>
 				</bean>
-				<bean class="org.springframework.web.servlet.view.velocity.VelocityViewResolver" p:order="2">
+				<bean class="org.springframework.web.servlet.view.velocity.VelocityLayoutViewResolver" p:order="2">
 					<property name="suffix" value=".vm" />
+					<property name="viewClass" value="org.springframework.web.servlet.view.velocity.VelocityLayoutView"  />
+			        <property name="layoutUrl" value="layout.vm" />
 				</bean>
 			</list>
 		</property>

@@ -1,42 +1,34 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US">
-<head>
-<title>${tags}</title>
-</head>
-<body>
 <h1>${tags}</h1>
-<table>
+<div id="entities">
 #foreach($entity in ${entities})
-#set ($isIdP = $metadataUtils.isIdP($entity))
-#set ($isSP = $metadataUtils.isSP($entity))
-#if ($isSP)
-#set ($type = "SP")
+
+    #set ($isIdP = $metadataUtils.isIdP($entity))
+    #set ($isSP = $metadataUtils.isSP($entity))
+    #if ($isSP)
+    	#set ($type = "SP")
+    #end
+    #if ($isIdP)
+    	#set ($type = "IdP")
+    #end
+    
+    #set ($validUntil = $entity.validUntil)
+    #set ($notAfter = $metadataUtils.firstCertExpiration($entity))
+    
+    #if ($notAfter)
+    	#if ($now.after($notAfter))
+    		#set ($dateClass = 'expired')
+    	#else
+    		#set ($dateClass = 'valid')
+    	#end
+    #else
+    	#set($dateClass = 'valid')
+    #end
+
+	<div id="${entity.ID}">
+        <h3>${entity.ID} (${type})</h3>
+		<div class="${dateClass}">
+			<a href="#springUrl("/md/${entity.ID}.html")">${entity.entityID}</a>
+        </div>
+	</div>
 #end
-#if ($isIdP)
-#set ($type = "IdP")
-#end
-	<tr>
-	    <td>${type}</td>
-		<td><a href="#springUrl("/md/${entity.id}.html")">${entity.entityID}</a></td>
-#set ($validUntil = $entity.validUntil)
-#if ($validUntil)
-		<td>$validUntil</td>
-#else
-		<td/>
-#end
-#set ($notAfter = $metadataUtils.firstCertExpiration($entity))
-#if ($notAfter)
-#if ($now.after($notAfter))
-#set ($dateClass = 'expired')
-#else
-#set ($dateClass = 'valid')
-#end
-		<td class="$dateClass">$notAfter</td>
-#else
-        <td class="expired"></td>
-#end
-   	</tr>
-#end
-</table>
-</body>
-</html>
+</div>
