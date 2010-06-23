@@ -63,7 +63,7 @@
 
 	<bean id="index" class="net.nordu.mdx.index.neo4j.Neo4JMetadataIndex" />
 
-	<bean id="storeFactory" class="net.nordu.mdx.MetadataStoreFactory"/>
+	<bean id="storeFactory" class="net.nordu.mdx.store.MetadataStoreFactory"/>
 		
 	<bean id="store" factory-bean="storeFactory" factory-method="createInstance">
 		<constructor-arg><value>${mdx.store.url}</value></constructor-arg>
