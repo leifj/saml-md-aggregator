@@ -63,8 +63,14 @@
 
 	<bean id="index" class="net.nordu.mdx.index.neo4j.Neo4JMetadataIndex" />
 
-	<!-- Check for new metadata every 30 seconds -->
-	<bean id="scanner" class="net.nordu.mdx.scanner.MetadataScanner" />
+	<bean id="storeFactory" class="net.nordu.mdx.MetadataStoreFactory"/>
+		
+	<bean id="store" factory-bean="storeFactory" factory-method="createInstance">
+		<constructor-arg><value>${mdx.store.url}</value></constructor-arg>
+	</bean>
+
+	<!-- Check for new metadata every N seconds using the store scanner -->
+	<bean id="scanner" factory-bean="store" factory-method="scanner"/>
 	<bean id="scannerScheduler" class="org.springframework.scheduling.timer.ScheduledTimerTask">
 		<property name="delay"><value>${mdx.scanner.delay}</value></property>
 		<property name="period"><value>${mdx.scanner.period}</value></property>
@@ -77,12 +83,6 @@
 				<!-- see the example above -->
 				<ref bean="scannerScheduler" />
 			</list>
-		</property>
-	</bean>
-
-	<bean id="store" class="net.nordu.mdx.store.fs.FileSystemMetadataStore">
-		<property name="directory">
-			<value>${mdx.directory}</value>
 		</property>
 	</bean>
 	

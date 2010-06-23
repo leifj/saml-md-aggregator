@@ -4,28 +4,44 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.TimerTask;
 
+import net.nordu.mdx.scanner.MetadataChange;
+import net.nordu.mdx.scanner.MetadataChangeType;
 import net.nordu.mdx.store.MetadataStore;
+import net.nordu.mdx.store.MetadataStoreContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.oasis.saml.metadata.EntityDescriptorDocument;
 import org.oasis.saml.metadata.EntityDescriptorType;
 
 public class FileSystemMetadataStore implements MetadataStore {
-
-	private File dir;
-	private String directory;
+	
+	private URLMetadataStoreContext context;
 	
 	public String getDirectory() {
-		return directory;
+		return context.getUrl().getPath();
 	}
 	
-	public void setDirectory(String directory) {
-		this.directory = directory;
-		this.dir = new File(directory);
+	public void setContext(URLMetadataStoreContext context) {
+		this.context = context;
+	}
+	
+	public URLMetadataStoreContext getContext() {
+		return context;
 	}
 	
 	private File getDir() {
-		return dir;
+		return new File(getDirectory());
+	}
+	
+	public void setContext(MetadataStoreContext c) throws Exception {
+		if (c instanceof URLMetadataStoreContext) {
+			context = (URLMetadataStoreContext)c;
+		} else {
+			throw new IllegalArgumentException("Bad MetadataStoreContext implementation");
+		}
 	}
 	
 	@Override
@@ -74,6 +90,31 @@ public class FileSystemMetadataStore implements MetadataStore {
 		Calendar t = Calendar.getInstance();
 		t.setTimeInMillis(f.lastModified());
 		return t;
+	}
+	
+	@Override
+	public TimerTask scanner() {
+		final MetadataStore store = this;
+		
+		return new TimerTask() {
+			private final Log log = LogFactory.getLog(this.getClass());
+			public void run() {
+				try {
+					for (String id: store.listIDs()) {
+						if (!context.getIndex().exists(id))
+							context.getChangeNotifier().notifyChange(new MetadataChange(id, MetadataChangeType.ADD));
+						else if (store.lastModified(id).after(context.getIndex().lastModified(id)))
+							context.getChangeNotifier().notifyChange(new MetadataChange(id, MetadataChangeType.MODIFY));
+					}
+					for (String id: context.getIndex().listIDs()) {
+						if (!store.exists(id))
+							context.getChangeNotifier().notifyChange(new MetadataChange(id, MetadataChangeType.REMOVE));
+					}
+				} catch (Exception ex) {
+					log.warn(ex.getMessage());
+				}
+			}
+		};
 	}
 
 }
