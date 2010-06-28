@@ -8,6 +8,10 @@
 	<name>saml-md-aggregator</name>
 	<description>SAML Metadata Signer and Aggregator</description>
 	<url>http://www.nordu.net</url>
+	<issueManagement>
+		<system>JIRA</system>
+		<url>https://project.nordu.net/browse/SAMLMDA</url>
+	</issueManagement>
 	<developers>
 		<developer>
 			<id>leifj</id>
@@ -25,6 +29,10 @@
 			<comments>NORDUnet BSD License</comments>
 		</license>
 	</licenses>
+	<organization>
+		<name>NORDUnet</name>
+		<url>http://www.nordu.net</url>
+	</organization>
 	<build>
 		<defaultGoal>install</defaultGoal>
 		<finalName>saml-md-aggregator</finalName>
@@ -45,6 +53,23 @@
 							<goal>embed</goal>
 						</goals>
 						<phase>package</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>deploy1</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy-file</goal>
+						</goals>
+						<configuration>
+							<repositoryId>ssh-repository</repositoryId>
+							<artifactId>saml-md-aggregator-standalone</artifactId>
+							<file>target/saml-md-aggregator-standalone.jar</file>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -338,4 +363,10 @@
 			<url>http://download.eclipse.org/jgit/maven</url>
 		</repository>
 	</repositories>
+	<distributionManagement>
+		<repository>
+			<id>ssh-repository</id>
+			<url>scpexe://maven@code.mnt.se/home/maven/2</url>
+		</repository>
+	</distributionManagement>
 </project>
