@@ -96,4 +96,20 @@
 	<bean id="indexer" class="net.nordu.mdx.scanner.MetadataIndexer"/>
 	<integration:service-activator input-channel="changes" method="index" ref="indexer"/>
 
+	<!--  cache -->
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+	  <property name="configLocation">
+	    <value>classpath:ehcache.xml</value>
+	  </property>
+	</bean>
+	
+	<bean id="mdxCacheFactory" class="org.springframework.cache.ehcache.EhCacheFactoryBean">
+	  <property name="cacheManager">
+	    <ref local="cacheManager"/>
+	  </property>
+	  <property name="cacheName">
+	    <value>MDXCache</value>
+	  </property>
+	</bean>
+
 </beans>

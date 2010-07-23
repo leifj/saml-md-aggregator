@@ -31,5 +31,6 @@
 	<servlet-mapping>
 		<servlet-name>static</servlet-name>
 		<url-pattern>/static/*</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping>	
+
 </web-app>

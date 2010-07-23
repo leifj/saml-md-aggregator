@@ -54,6 +54,22 @@ public class Neo4JMetadataIndex implements MetadataIndex {
 		if (ids.size() > 0)
 			return ids;
 		
+		for (Node n: getNodesByAttribute(NF_INTERNAL,"entityID",tags[0])) {
+			if (hasAttributes(n,NF_NONE,"tags",tags,1))
+				ids.add((String)n.getProperty(ENTITY_ID));
+		}
+		
+		if (ids.size() > 0)
+			return ids;
+		
+		for (Node n: getNodesByAttribute(NF_INTERNAL,"entityIDHash",tags[0])) {
+			if (hasAttributes(n,NF_NONE,"tags",tags,1))
+				ids.add((String)n.getProperty(ENTITY_ID));
+		}
+		
+		if (ids.size() > 0)
+			return ids;
+		
 		for (Node n: getNodesByAttribute(NF_NONE, "tags", tags[0])) {
 			if (hasAttributes(n,NF_NONE,"tags",tags,0))
 				ids.add((String)n.getProperty(ENTITY_ID));

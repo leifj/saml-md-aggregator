@@ -25,7 +25,7 @@
     #end
 
 	<div id="${entity.ID}">
-        <h3>${entity.ID} (${type})</h3>
+        <h3 style="padding-left: 20px;">${entity.ID}</h3>
 		<div class="${dateClass}">
 			<a href="#springUrl("/md/${entity.ID}.html")">${entity.entityID}</a>
         </div>

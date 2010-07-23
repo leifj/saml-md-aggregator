@@ -68,7 +68,11 @@
 						<configuration>
 							<repositoryId>ssh-repository</repositoryId>
 							<artifactId>saml-md-aggregator-standalone</artifactId>
+                                                        <groupId>net.nordu.saml-md-aggregator</groupId> 
+                                                        <packaging>jar</packaging>
+                                                        <version>1.0.0-SNAPSHOT</version>
 							<file>target/saml-md-aggregator-standalone.jar</file>
+                                                        <url>scpexe://maven@code.mnt.se/home/maven/2</url>
 						</configuration>
 					</execution>
 				</executions>
@@ -329,6 +333,20 @@
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
 			<version>0.8.4</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+			<version>2.0.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.6.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<repositories>
