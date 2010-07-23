@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.TimerTask;
 
 import net.nordu.mdx.scanner.MetadataChange;
-import net.nordu.mdx.scanner.MetadataChangeNotifier;
 import net.nordu.mdx.scanner.MetadataChangeType;
 import net.nordu.mdx.store.MetadataStore;
 import net.nordu.mdx.store.MetadataStoreContext;
@@ -29,7 +28,6 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.TreeFilter;
 import org.oasis.saml.metadata.EntityDescriptorDocument;
 import org.oasis.saml.metadata.EntityDescriptorType;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class GitRepositoryMetadataStore implements MetadataStore {
 
