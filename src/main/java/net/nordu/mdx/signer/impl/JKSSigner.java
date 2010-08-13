@@ -28,11 +28,15 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
 import net.nordu.mdx.signer.MetadataSigner;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Node;
 
 @SuppressWarnings("restriction")
 public class JKSSigner implements MetadataSigner {
 
+	Log log = LogFactory.getLog(JKSSigner.class);
+	
 	private char[] pin;
 	private String providerClassName;
 	private String configName;
@@ -147,8 +151,9 @@ public class JKSSigner implements MetadataSigner {
 			}
 			assert(cryptoProvider != null);
 			int pos = Security.addProvider(cryptoProvider);
-			if (pos == -1)
-				throw new IllegalArgumentException("Unable to add crypto provider: "+getProviderClassName());
+			if (pos == -1) {
+				log.info("The crypto provider "+getProviderClassName()+" was already installed...");
+			}
 		}
 		
 		keyStore = KeyStore.getInstance(getProviderType());
