@@ -289,12 +289,6 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>velocity</groupId>
-			<artifactId>velocity</artifactId>
-			<version>1.5</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 			<version>1.2.1</version>
@@ -323,13 +317,6 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>velocity-tools</groupId>
-			<artifactId>velocity-tools</artifactId>
-			<version>1.4</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.eclipse.jgit</groupId>
 			<artifactId>org.eclipse.jgit</artifactId>
 			<version>0.8.4</version>
@@ -345,6 +332,20 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.6.1</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity-tools</artifactId>
+			<version>2.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.6.4</version>
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
