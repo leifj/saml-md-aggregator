@@ -4,7 +4,7 @@
 	<groupId>net.nordu.saml-md-aggregator</groupId>
 	<artifactId>saml-md-aggregator</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>pom</packaging>
 	<name>saml-md-aggregator</name>
 	<description>SAML Metadata Signer and Aggregator</description>
 	<url>http://www.nordu.net</url>
@@ -21,10 +21,18 @@
 			<timezone>MET</timezone>
 		</developer>
 	</developers>
+        <scm>
+                <connection>
+                        scm:git:git://git.nordu.net/saml-md-aggregator.git
+                </connection>
+                <developerConnection>
+                        scm:git:ssh://git@git.nordu.net/saml-md-aggregator.git
+                </developerConnection>
+        </scm>
 	<licenses>
 		<license>
 			<name>BSD</name>
-			<url>http://nordu.net/LICENSE.txt</url>
+			<url>http://nordu.net/opensource/LICENSE.txt</url>
 			<distribution>repo</distribution>
 			<comments>NORDUnet BSD License</comments>
 		</license>
@@ -44,45 +52,17 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>net.sf.alchim</groupId>
-				<artifactId>winstone-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>embed</goal>
-						</goals>
-						<phase>package</phase>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>deploy1</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>deploy-file</goal>
-						</goals>
-						<configuration>
-							<repositoryId>ssh-repository</repositoryId>
-							<artifactId>saml-md-aggregator-standalone</artifactId>
-                                                        <groupId>net.nordu.saml-md-aggregator</groupId> 
-                                                        <packaging>jar</packaging>
-                                                        <version>1.0.0-SNAPSHOT</version>
-							<file>target/saml-md-aggregator-standalone.jar</file>
-                                                        <url>scpexe://maven@code.mnt.se/home/maven/2</url>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
 	</build>
+        <modules>
+           <module>web</module>
+           <module>app</module>
+        </modules>
 	<properties>
 		<org.springframework.version>3.0.2.RELEASE</org.springframework.version>
 	</properties>
-	<dependencies>
+        <dependencyManagement>
+	   <dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -94,12 +74,6 @@
 			<artifactId>commons-logging</artifactId>
 			<version>1.1.1</version>
 		</dependency>
-		<!--
-			dependency> <groupId>bouncycastle</groupId>
-			<artifactId>bcmail-jdk16</artifactId> <version>140</version>
-			</dependency> <dependency> <groupId>javax.xml.crypto</groupId>
-			<artifactId>xmldsig</artifactId> <version>1.0</version> </dependency
-		-->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -349,7 +323,8 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-	</dependencies>
+	   </dependencies>
+        </dependencyManagement>
 	<repositories>
 		<repository>
 			<snapshots>

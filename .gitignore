@@ -1,3 +1,5 @@
 target
+app/target
+web/target
 .neo4j
 *.jks
