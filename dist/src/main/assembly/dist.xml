@@ -13,7 +13,7 @@
   			<exclude>org.apache.santuario:xmlsec</exclude>
   			<exclude>net.nordu.saml-md-aggregator:saml-md-aggregator-web</exclude>
   			<exclude>org.eclipse.jetty:jetty-start</exclude>
-  			<exclude>net.nordu.saml-md-aggregator:saml-md-aggregator-app</exclude>
+  			<exclude>net.nordu.saml-md-aggregator:saml-md-aggregator-dist</exclude>
   		</excludes>
   	</dependencySet>
   	<dependencySet>
