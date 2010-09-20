@@ -27,7 +27,7 @@
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location">
-			<value>classpath:mdx.properties</value>
+			<value>${mdx.config}</value>
 		</property>
 		<property name="systemPropertiesMode"><value>2</value></property>
 	</bean>

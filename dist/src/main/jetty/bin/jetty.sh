@@ -360,7 +360,7 @@ esac
 #####################################################
 # Add jetty properties to Java VM options.
 #####################################################
-JAVA_OPTIONS+=("-Djetty.home=$JETTY_HOME" "-Djava.io.tmpdir=$TMPDIR")
+JAVA_OPTIONS+=("-Djetty.home=$JETTY_HOME" "-Djava.io.tmpdir=$TMPDIR" "-Djava.dirs.endorsed=$JETTY_HOME/lib/endorsed" "-Dmdx.config=file://$JETTY_HOME/etc/mdx.properties")
 
 [ -f "$JETTY_HOME/etc/start.config" ] && JAVA_OPTIONS=("-DSTART=$JETTY_HOME/etc/start.config" "${JAVA_OPTIONS[@]}")
 
@@ -370,13 +370,14 @@ JAVA_OPTIONS+=("-Djetty.home=$JETTY_HOME" "-Djava.io.tmpdir=$TMPDIR")
 
 JETTY_START=$JETTY_HOME/start.jar
 [ ! -f "$JETTY_START" ] && JETTY_START=$JETTY_HOME/lib/start.jar
-[ ! -f "$JETTY_START" ] && JETTY_START=`echo $JETTY_HOME/lib/jetty-start-*.jar`
 
 START_INI=$(dirname $JETTY_START)/start.ini
 [ -r "$START_INI" ] || START_INI=""
 
 RUN_ARGS=(${JAVA_OPTIONS[@]} -jar "$JETTY_START" $JETTY_ARGS "${CONFIGS[@]}")
 RUN_CMD=("$JAVA" ${RUN_ARGS[@]})
+
+CLASSPATH=$CLASSPATH:$JETTY_HOME/config
 
 #####################################################
 # Comment these out after you're happy with what 

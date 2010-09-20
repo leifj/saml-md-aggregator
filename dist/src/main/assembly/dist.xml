@@ -57,5 +57,33 @@
   			<include>*</include>
   		</includes>
   	</fileSet>
+  	<fileSet>
+  		<directory>src/main/jetty</directory>
+  		<fileMode>644</fileMode>
+  		<outputDirectory>.</outputDirectory>
+  		<includes>
+  			<include>start.ini</include>
+  		</includes>
+  	</fileSet>
+  	<fileSet>
+  		<directory>src/main/jetty/logs</directory>
+  		<outputDirectory>logs</outputDirectory>
+  		<directoryMode>0755</directoryMode>
+	</fileSet>
+	<fileSet>
+  		<directory>src/main/jetty/db</directory>
+  		<outputDirectory>db</outputDirectory>
+  		<directoryMode>0755</directoryMode>
+	</fileSet>
+	<fileSet>
+  		<directory>src/main/jetty/credentials</directory>
+  		<outputDirectory>credentials</outputDirectory>
+  		<directoryMode>0755</directoryMode>
+	</fileSet>
+	<fileSet>
+  		<directory>src/main/jetty/metadata</directory>
+  		<outputDirectory>metadata</outputDirectory>
+  		<directoryMode>0755</directoryMode>
+	</fileSet>
   </fileSets>
 </assembly>
