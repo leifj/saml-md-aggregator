@@ -65,7 +65,7 @@
         <modules>
            <module>core</module>
            <module>web</module>
-           <module>app</module>
+           <module>dist</module>
         </modules>
         <repositories>
                 <repository>
@@ -376,6 +376,13 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlet</artifactId>
+			<version>7.1.6.v20100715</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-deploy</artifactId>
 			<version>7.1.6.v20100715</version>
 			<type>jar</type>
 			<scope>compile</scope>

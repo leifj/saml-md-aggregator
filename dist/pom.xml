@@ -7,9 +7,9 @@
            <version>1.0.0-SNAPSHOT</version>
         </parent>
         <groupId>net.nordu.saml-md-aggregator</groupId>
-        <artifactId>saml-md-aggregator-app</artifactId>
-	<packaging>jar</packaging>
-	<name>saml-md-aggregator standalone</name>
+        <artifactId>saml-md-aggregator-dist</artifactId>
+	<packaging>pom</packaging>
+	<name>saml-md-aggregator distribution</name>
 	<version>1.0.0-SNAPSHOT</version>
 	<build>
 		<defaultGoal>install</defaultGoal>
@@ -26,9 +26,6 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<descriptorRefs>
-						<descriptorRef>bin</descriptorRef>
-					</descriptorRefs>
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
@@ -38,14 +35,14 @@
 				</configuration>
 				<executions>
 					<execution>
-						<id>make-full-jar</id>
+						<id>saml-md-aggregator</id>
 						<phase>package</phase>
 						<goals>
 							<goal>attached</goal>
 						</goals>
 						<configuration>
 							<descriptors>
-								<descriptor>src/main/assembly/src.xml</descriptor>
+								<descriptor>src/main/assembly/dist.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
@@ -60,12 +57,12 @@
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
+            <artifactId>commons-logging</artifactId>
 		</dependency>
-		<dependency>
+		<!-- dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
-		</dependency>
+		</dependency -->
 		<dependency>
 			<groupId>org.apache.santuario</groupId>
 			<artifactId>xmlsec</artifactId>
@@ -79,10 +76,20 @@
 			<artifactId>jetty-webapp</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>net.nordu.saml-md-aggregator</groupId>
-           	<artifactId>saml-md-aggregator-web</artifactId>
-           	<version>1.0.0-SNAPSHOT</version>
-           	<type>war</type>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-deploy</artifactId>
+		</dependency>
+		<dependency>
+           <groupId>net.nordu.saml-md-aggregator</groupId>
+           <artifactId>saml-md-aggregator-web</artifactId>
+           <version>1.0.0-SNAPSHOT</version>
+           <type>war</type>
+        </dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-start</artifactId>
+			<version>7.1.6.v20100715</version>
+			<type>jar</type>
 		</dependency>
 	</dependencies>
 </project>
