@@ -6,19 +6,14 @@
            <artifactId>saml-md-aggregator</artifactId>
            <version>1.0.0-SNAPSHOT</version>
         </parent>
-        <artifactId>saml-md-aggregator-web</artifactId>
-	<packaging>war</packaging>
-	<name>saml-md-aggregator webapp</name>
+        <artifactId>saml-md-aggregator-core</artifactId>
+	<packaging>jar</packaging>
+	<name>saml-md-aggregator core</name>
 	<build>
 		<defaultGoal>install</defaultGoal>
 	</build>
 	<dependencies>
-                <dependency>
-                   <groupId>net.nordu.saml-md-aggregator</groupId>
-                   <artifactId>saml-md-aggregator-core</artifactId>
-                   <version>1.0.0-SNAPSHOT</version>
-                </dependency>
-		<!-- dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
@@ -131,6 +126,6 @@
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-servlet</artifactId>
-		</dependency -->
+		</dependency>
 	</dependencies>
 </project>

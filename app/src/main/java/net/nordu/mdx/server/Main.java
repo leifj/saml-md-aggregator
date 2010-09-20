@@ -13,9 +13,14 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 	        Server jetty = new Server(8080);
-	        final URL warUrl = Main.class.getClassLoader().getResource("webapp");
-	        final String warUrlString = warUrl.toExternalForm();
-	        jetty.setHandler(new WebAppContext(warUrlString, "/"));
+	        final URL webXmlUrl = Thread.currentThread().getContextClassLoader().getResource("WEB-INF/web.xml");
+	        WebAppContext context = new WebAppContext();
+	        
+	        String webXmlPath = webXmlUrl.toExternalForm();
+	        context.setDescriptor(webXmlPath);
+	        context.setContextPath("/");
+	        context.setResourceBase(webXmlPath+"/../.."); // TODO Make this filesystem portable!
+	        jetty.setHandler(context);
 			jetty.start();
 			jetty.join();
 		} catch (Exception ex) {
